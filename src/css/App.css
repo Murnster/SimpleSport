@@ -1,0 +1,72 @@
+.sideNavBar {
+    left: 0;
+    height: 100%;
+    width: 200px;
+    position: fixed;
+    background-color: black;
+}
+
+.sideNavHeader {
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    color: white;
+    height: 50px;
+    align-items: center;
+}
+
+.sideNavHeader h2 {
+    margin-left: 20px;
+}
+
+.sideNavBody {
+    padding: 5px;
+}
+
+.mainContainer {
+    margin-left: 200px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.bigContainer {
+    margin: 10px;
+    border: 1px solid black;
+    border-radius: 15px;
+    width: 65%;
+    height: 550px;
+    display: flex;
+    flex-direction: column;
+}
+
+.smallContainer {
+    margin: 10px;
+    border: 1px solid black;
+    border-radius: 15px;
+    width: 35%;
+    height: 550px;
+    display: flex;
+    flex-direction: column;
+}
+
+.containerHeader {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    border-radius: 15px;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.containerHeader div {
+    margin-left: 10px;
+}

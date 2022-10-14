@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 
-import './App.css';
+import './css/App.css';
+import Dashboard from "./components/Dashboard";
 
 const App = () => {
   return (
@@ -15,6 +16,9 @@ const App = () => {
           <h2>SimpleSport</h2>
         </div>
         <div className="sideNavBody"></div>
+      </div>
+      <div className="mainContainer">
+          <Dashboard />
       </div>
     </div>
   )
