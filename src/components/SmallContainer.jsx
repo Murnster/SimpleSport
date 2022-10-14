@@ -2,7 +2,9 @@ import React from "react";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const SmallContainer = ({headIcon, title}) => {
+const SmallContainer = ({headIcon, title, data}) => {
+    console.log(data);
+    
     return (
         <div className="smallContainer">
             <div className="containerHeader">
