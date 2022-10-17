@@ -1,3 +1,7 @@
+body {
+    margin: 0;
+}
+
 .sideNavBar {
     left: 0;
     height: 100%;
@@ -23,6 +27,23 @@
     padding: 5px;
 }
 
+.sideNavItem {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    color: white;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+.sideNavItem h3 {
+    margin: 0px;
+}
+
+.sideNavItem svg {
+    margin-right: 5px;
+}
+
 .mainContainer {
     margin-left: 200px;
     padding: 10px;
@@ -40,7 +61,7 @@
     margin: 10px;
     border: 1px solid black;
     border-radius: 15px;
-    width: 65%;
+    width: 70%;
     height: 550px;
     display: flex;
     flex-direction: column;
@@ -50,7 +71,7 @@
     margin: 10px;
     border: 1px solid black;
     border-radius: 15px;
-    width: 35%;
+    width: 30%;
     height: 550px;
     display: flex;
     flex-direction: column;
@@ -69,4 +90,50 @@
 
 .containerHeader div {
     margin-left: 10px;
+}
+
+.containerBody {
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+}
+
+.containerBody .upcomingRow:first-of-type {
+    border-top: 0;
+}
+
+.dashCalContainer {
+    height: 100%;
+    margin: 10px;
+}
+
+.upcomingRow {
+    width: 100%;
+    height: 50px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.msgTeamBox {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.msgTeamText {
+    height: 75%;
+    resize: none;
+    margin: 10px;
+}
+
+.msgTeamFooter {
+    margin-left: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    height: 25px;
 }
