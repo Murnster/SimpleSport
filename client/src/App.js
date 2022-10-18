@@ -14,6 +14,17 @@ import System from "./components/System";
 const App = () => {
   //backend
   const [backendData, setBackendData] = useState([{}]);
+  const [testNetwork, setNetwork] = useState([{}]);
+
+  useEffect(() => {
+    fetch("/events").then(
+      response => response.json()
+    ).then(
+      data => {
+        setNetwork(data);
+      }
+    )
+  }, []);
 
   useEffect(() => {
     fetch("/api").then(
