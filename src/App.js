@@ -4,13 +4,27 @@ import { useEffect, useState } from "react";
 import './css/App.css';
 import Dashboard from "./components/Dashboard";
 import Navbar from "./components/Navbar";
+import Schedule from "./components/Schedule";
+import Roster from "./components/Roster";
+import Messenger from "./components/Messenger";
+import System from "./components/System";
 
 const App = () => {
+  const [screen, setScreen] = useState('Dashboard');
+
+  const changeScreen = event => {
+    setScreen(screen => event)
+  };
+
   return (
     <div className="app">
-      <Navbar />
+      <Navbar setScreen={setScreen} />
       <div className="mainContainer">
-          <Dashboard />
+          { screen === 'Dashboard' && <Dashboard /> }
+          { screen === 'Schedule' && <Schedule /> }
+          { screen === 'Roster' && <Roster /> }
+          { screen === 'Messenger' && <Messenger /> }
+          { screen === 'System' && <System /> }
       </div>
     </div>
   )
