@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 
 import './css/App.css';
+import './css/Schedule.css';
 import Dashboard from "./components/Dashboard";
 import Navbar from "./components/Navbar";
 import Schedule from "./components/Schedule";
