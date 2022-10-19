@@ -1,5 +1,6 @@
 // hooks
 import { useEffect, useState } from "react";
+import { get } from "./network";
 
 import './css/App.css';
 import './css/Schedule.css';
@@ -12,38 +13,24 @@ import Messenger from "./components/Messenger";
 import System from "./components/System";
 
 const App = () => {
-  //backend
-  const [backendData, setBackendData] = useState([{}]);
-  const [testNetwork, setNetwork] = useState([{}]);
+  const [mainData, getMainData] = useState([{}]);
 
   useEffect(() => {
-    fetch("/events").then(
-      response => response.json()
-    ).then(
-      data => {
-        setNetwork(data);
-      }
-    )
-  }, []);
+    async function siteData() {
+      const response = await get('events');
+    };
 
-  useEffect(() => {
-    fetch("/api").then(
-      response => response.json()
-    ).then(
-      data => {
-        setBackendData(data);
-      }
-    )
-  }, []);
-
+    siteData();
+  }, [mainData]);
   
-  //
+  console.log(mainData, 'maindata');
+
   const [screen, setScreen] = useState('Dashboard');
 
   const changeScreen = event => {
     setScreen(screen => event)
   };
-
+  
   return (
     <div className="app">
       <Navbar setScreen={setScreen} />

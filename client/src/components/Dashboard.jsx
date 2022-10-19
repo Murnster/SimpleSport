@@ -78,8 +78,7 @@ const Dashboard = () => {
     const events = data.events.map(ev => {
       return { title: ev.title, start: ev.startTime, end: ev.endTime };
     });
-
-    console.log(events);
+    
     const calendar = (
       <div className="dashCalContainer">
         <FullCalendar 
