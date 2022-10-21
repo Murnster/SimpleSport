@@ -13,18 +13,22 @@ import Messenger from "./components/Messenger";
 import System from "./components/System";
 
 const App = () => {
-  const [mainData, getMainData] = useState([{}]);
+  const [dashboardData, getDashboardData] = useState([{}]);
+  
+  const fetchDashboard = async () => {
+    const data = await get('events');
+    getDashboardData(data);
+  };
 
   useEffect(() => {
-    async function siteData() {
-      const response = await get('events');
+    const dashboardEffect = async () => {
+      await fetchDashboard();
     };
 
-    siteData();
-  }, [mainData]);
+    dashboardEffect();
+  }, []);
   
-  console.log(mainData, 'maindata');
-
+  console.log(dashboardData);
   const [screen, setScreen] = useState('Dashboard');
 
   const changeScreen = event => {

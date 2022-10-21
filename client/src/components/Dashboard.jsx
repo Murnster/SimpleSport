@@ -15,32 +15,32 @@ const Dashboard = () => {
           id: 1,
           title: 'Tuesday Practice',
           type: 1,
-          startTime: '2022-10-11T16:30:00',
-          endTime: '2022-10-11T18:30:00',
+          startDate: '2022-10-11T16:30:00',
+          endDate: '2022-10-11T18:30:00',
           desc: '4:30 start'
         },
         {
           id: 2,
           title: 'Wednesday Practice',
           type: 1,
-          startTime: '2022-10-12T16:30:00',
-          endTime: '2022-10-12T18:30:00',
+          startDate: '2022-10-12T16:30:00',
+          endDate: '2022-10-12T18:30:00',
           desc: '4:30 start'
         },
         {
           id: 3,
           title: 'Friday Practice',
           type: 1,
-          startTime: '2022-10-14T16:30:00',
-          endTime: '2022-10-14T18:30:00',
+          startDate: '2022-10-14T16:30:00',
+          endDate: '2022-10-14T18:30:00',
           desc: '4:30 start'
         },
         {
           id: 4,
           title: 'StFX at Acadia',
           type: 2,
-          startTime: '2022-10-15T14:00:00',
-          endTime: '2022-10-15T16:00:00',
+          startDate: '2022-10-15T14:00:00',
+          endDate: '2022-10-15T16:00:00',
           desc: '2pm KO'
         }
       ],
@@ -76,7 +76,7 @@ const Dashboard = () => {
     };
 
     const events = data.events.map(ev => {
-      return { title: ev.title, start: ev.startTime, end: ev.endTime };
+      return { title: ev.title, start: ev.startDate, end: ev.endDate };
     });
     
     const calendar = (
@@ -92,20 +92,10 @@ const Dashboard = () => {
       </div>
     );
 
-    // data.events.forEach(ev => {
-    //   upcomingEv.push((
-    //       <div className="upcomingRow">
-    //         <div>{ev.title}</div>
-    //         <div>{ev.startTime}</div>
-    //         <div>{ev.desc}</div>
-    //       </div>
-    //     ));
-    // });
-
     const upcomingEvents = data.events.map((ev) => 
       <div key={'event-' + ev.id.toString()} className="upcomingRow">
         <div>{ev.title}</div>
-        <div>{ev.startTime}</div>
+        <div>{ev.startDate}</div>
         <div>{ev.desc}</div>
       </div>
     );
