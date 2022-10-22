@@ -9,7 +9,7 @@ import FullContainer from "./FullContainer";
 
 import { useState } from "react";
 import { useEffect } from "react";
-import { get } from "../network";
+import { get, post } from "../network";
 
 const Schedule = () => {
   const [scheduleData, getScheduleData] = useState([{}]);
@@ -17,6 +17,12 @@ const Schedule = () => {
   const fetchSchedule = async () => {
     const data = await get('events');
     getScheduleData(data);
+  };
+
+  const postEvent = async (event) => {
+    const res = await post('postEvent', event);
+    
+    console.log(res);
   };
 
   useEffect(() => {
@@ -34,7 +40,7 @@ const Schedule = () => {
   const calendar = (
     <div>
       <div className="scheduleHeader">
-        <button className="scheduleButton">Add Event</button>
+        <button onClick={() => postEvent()} className="scheduleButton">Add Event</button>
       </div>
       <div className="calendar"></div>
       <div className="dashCalContainer">
