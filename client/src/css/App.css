@@ -111,8 +111,13 @@ body {
 }
 
 .dashCalContainer {
+    z-index: 100;
     height: 100%;
     margin: 10px;
+}
+
+.fc-toolbar {
+    margin-bottom: 5px !important;
 }
 
 .upcomingRow {
@@ -144,4 +149,37 @@ body {
     display: flex;
     flex-direction: row;
     height: 25px;
+}
+
+.quickEvent {
+    margin: 10px;
+}
+
+.quickEventHeader {
+    margin-bottom: 10px;
+}
+
+.quickEventBody h4 {
+    margin: 0px;
+}
+
+.quickEventInput {
+    width: 98%;
+    height: 16px;
+    resize: none;
+    margin-top: 5px;
+}
+
+.quickEventInputDesc {
+    height: 150px !important;
+}
+
+.quickEventFooter {
+    display: flex;
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.mr15 {
+    margin-right: 15px;
 }

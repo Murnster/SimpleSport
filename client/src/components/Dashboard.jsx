@@ -3,6 +3,7 @@ import Moment from 'react-moment';
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
+import listPlugin from '@fullcalendar/list';
 
 import { faCalendar, faCalendarCheck, faPeopleGroup, faMessage } from '@fortawesome/free-solid-svg-icons'
 import BigContainer from "./BigContainer";
@@ -15,32 +16,32 @@ const Dashboard = () => {
           id: 1,
           title: 'Tuesday Practice',
           type: 1,
-          startDate: '2022-10-11T16:30:00',
-          endDate: '2022-10-11T18:30:00',
+          startDate: '2022-10-25T16:30:00',
+          endDate: '2022-10-25T18:30:00',
           desc: '4:30 start'
         },
         {
           id: 2,
           title: 'Wednesday Practice',
           type: 1,
-          startDate: '2022-10-12T16:30:00',
-          endDate: '2022-10-12T18:30:00',
+          startDate: '2022-10-26T16:30:00',
+          endDate: '2022-10-26T18:30:00',
           desc: '4:30 start'
         },
         {
           id: 3,
           title: 'Friday Practice',
           type: 1,
-          startDate: '2022-10-14T16:30:00',
-          endDate: '2022-10-14T18:30:00',
+          startDate: '2022-10-28T16:30:00',
+          endDate: '2022-10-28T18:30:00',
           desc: '4:30 start'
         },
         {
           id: 4,
           title: 'StFX at Acadia',
           type: 2,
-          startDate: '2022-10-15T14:00:00',
-          endDate: '2022-10-15T16:00:00',
+          startDate: '2022-10-29T14:00:00',
+          endDate: '2022-10-29T16:00:00',
           desc: '2pm KO'
         }
       ],
@@ -75,6 +76,8 @@ const Dashboard = () => {
       ]
     };
 
+    
+
     const events = data.events.map(ev => {
       return { title: ev.title, start: ev.startDate, end: ev.endDate };
     });
@@ -83,20 +86,35 @@ const Dashboard = () => {
       <div className="dashCalContainer">
         <FullCalendar 
           plugins={ 
-            [ dayGridPlugin ]
+            [ dayGridPlugin, listPlugin ]
           }
-          initialView="dayGridMonth"
+          initialView="listWeek"
           height={475}
           events={events}
+          headerToolbar={{start: "title", center: '', end: ''}}
+          eventClick={() => {}}
         />
       </div>
     );
 
-    const upcomingEvents = data.events.map((ev) => 
-      <div key={'event-' + ev.id.toString()} className="upcomingRow">
-        <div>{ev.title}</div>
-        <div>{ev.startDate}</div>
-        <div>{ev.desc}</div>
+    const upcomingEvents = (
+      <div className="quickEvent">
+        <div className="quickEventHeader">Quickly create a new event for you team!</div>
+        <div className="quickEventBody">
+          <h4>Title</h4>
+          <textarea className="quickEventInput"></textarea>
+          <h4>Start Date/Time</h4>
+          <textarea className="quickEventInput"></textarea>
+          <h4>End Date/Time</h4>
+          <textarea className="quickEventInput"></textarea>
+          <h4>Type</h4>
+          <textarea className="quickEventInput"></textarea>
+          <h4>Description (255 character max)</h4>
+          <textarea className="quickEventInput quickEventInputDesc"></textarea>
+        </div>
+        <div className="quickEventFooter">
+          <button className="quickEventSubmit">Create Event</button>
+        </div>
       </div>
     );
 
@@ -121,8 +139,8 @@ const Dashboard = () => {
     return (
         <div className="dashboard">
           <div className="row">
-            <BigContainer headIcon={faCalendar} title={"Schedule"} content={ calendar } />
-            <SmallContainer headIcon={faCalendarCheck} title={"Upcoming Events"} content={ upcomingEvents } />
+            <BigContainer headIcon={faCalendar} title={"Upcoming Events"} content={ calendar } />
+            <SmallContainer headIcon={faCalendarCheck} title={"Quick Event"} content={ upcomingEvents } />
           </div>
           <div className="row">
             <BigContainer headIcon={faPeopleGroup} title={"Roster"} content={ roster } />

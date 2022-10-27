@@ -1,0 +1,55 @@
+.popupWrapper {
+    z-index: 101 !important;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+}
+
+.popupContainer {
+    z-index: 101 !important;
+    position: absolute;
+    left: 25%;
+    right: 25%;
+    top: 25%;
+    bottom: 25%;
+    width: 750px;
+    height: 500px;
+    text-align: center;
+    border-radius: 5px;
+    border-color: black;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.popupHeader {
+    width: 100%;
+    height: 60px;
+    color: white;
+    background: black;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popupHeader h3 {
+    margin-left: 10px;
+}
+
+.popupHeader svg {
+    margin-right: 10px;
+}
+
+.popupBody {
+    margin: 10px;
+}

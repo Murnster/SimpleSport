@@ -1,0 +1,39 @@
+.input {
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+}
+
+.inputSmall {
+    width: 40%;
+}
+
+.inputLarge {
+    width: 100%;
+}
+
+.inputHeading {
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+/* .inputContent {
+    margin-bottom: 1px;
+} */
+
+.inputHelper {
+    text-align: left;
+    font-size: 12px;
+}
+
+.shortTextInput {
+    resize: none;
+    height: 16px;
+    width: 100%;
+}
+
+.longTextInput {
+    resize: none;
+    width: 100%;
+    height: 150px;
+}
