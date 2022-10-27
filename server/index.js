@@ -28,9 +28,16 @@ app.post('/postEvent', (req, res) => {
 
     db.query(`INSERT INTO events VALUES (null, '${payload.title}', '${payload.startDate}', '${payload.endDate}', '${payload.desc}', '${payload.typeID}')`, (err, result) => {
         if (err) { 
-            console.log(err); 
+            console.log(err);
+            res.end(JSON.stringify({
+                success: false,
+                result
+            }));
         } else {
-            res.end(JSON.stringify(result));
+            res.end(JSON.stringify({
+                success: true,
+                result
+            }));
         }
     });
 });

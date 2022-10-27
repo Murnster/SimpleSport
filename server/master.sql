@@ -16,3 +16,6 @@ CREATE TABLE `memberTypes` (`typeID` int NOT NULL AUTO_INCREMENT, `title` varcha
 INSERT INTO `memberTypes` VALUES (null, 'Player');
 INSERT INTO `memberTypes` VALUES (null, 'Coach');
 INSERT INTO `memberTypes` VALUES (null, 'Trainer');
+
+ALTER TABLE events MODIFY COLUMN startDate datetime NOT NULL;
+ALTER TABLE events MODIFY COLUMN endDate datetime NOT NULL;

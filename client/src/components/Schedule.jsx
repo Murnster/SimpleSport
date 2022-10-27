@@ -4,12 +4,12 @@ import { faCalendar } from '@fortawesome/free-solid-svg-icons'
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
-
-import FullContainer from "./FullContainer";
+import moment from "moment";
 
 import { useState, useEffect } from "react";
 import { get, post } from "../network";
 
+import FullContainer from "./FullContainer";
 import Popup from "./Popup";
 import Input from "./Input";
 
@@ -22,39 +22,82 @@ const Schedule = () => {
     getScheduleData(data);
   };
 
+  const fakeDataTypes = [
+    { typeID: "1", label: 'Practice' },
+    { typeID: "2", label: 'Game' }
+  ];
+
   const eventPopup = (
     <div className="createEvent">
       <div className="createEventHeader"></div>
       <div className="createEventBody">
         <div className="row">
           <Input id="newEventTitle" type="shorttext" title="Event Title" helper="Name of your event" />
-          <Input id="newEventType" type="" title="Event Type" helper="Type of your event" />
+          <Input id="newEventType" type="select" title="Event Type" helper="Select Type of your event" options={fakeDataTypes} />
         </div>
         <div className="row">
-          <Input id="newEventStart" type="shorttext" title="Event Start Time" helper="When does this event start" />
-          <Input id="newEventEnd" type="shorttext" title="Event End Time" helper="When does this event end" />
+          <Input id="newEventStart" type="date" title="Event Start Time" helper="When does this event start" />
+          <Input id="newEventEnd" type="date" title="Event End Time" helper="When does this event end" />
         </div>
         <div className="row">
-          <Input id="newEventDesc" type="longtext" title="Event Description" helper="Describe your event" />        </div>
+          <Input id="newEventDesc" type="longtext" title="Event Description" helper="Describe your event" />
+        </div>
       </div>
       <div className="createEventFooter">
-        <button onClick={() => testFunc()}>submit event</button>
-        <button>cancel event</button>
+        <button onClick={async () => await saveEvent()}>Submit Event</button>
+        <button onClick={() => setOpenPopup(false)}>Cancel Event</button>
       </div>
     </div>
   );
   
-  // this works
-  const testFunc = () => {
-    const test = document.getElementById('newEventTitle');
+  const saveEvent = async () => {
+    const title = document.getElementById('newEventTitle');
+    const type = document.getElementById('newEventType');
+    const start = document.getElementById('newEventStart');
+    const end = document.getElementById('newEventEnd');
+    const desc = document.getElementById('newEventDesc');
 
-    console.log(test.value);
+    if (title.value === "") {
+      title.focus();
+      return;
+    } else if (type.value === "-1") {
+      type.focus();
+      return;
+    } else if (start.value === "" || !start.value) {
+      start.focus();
+      return;
+    } else if (end.value === "" || !end.value) {
+      end.focus();
+      return;
+    } else if (desc.value === "" || desc.value.length > 255) {
+      desc.focus();
+      return;
+    }
+    
+    const payload = {
+      title: title.value,
+      typeID: +type.value,
+      startDate: start.value,
+      endDate: end.value,
+      desc: desc.value
+    };
+
+    console.log(start.value, moment(start.value).format('YYYY-MM-DD hh:mm:ss'));
+    console.log('did i pass the test?', payload);
+    const result = await postEvent(payload);
+
+    if (result.success) {
+      fetchSchedule();
+      setOpenPopup(false);
+    } else {
+      console.error('There was a failure trying to save this event');
+    }
   }
 
   const postEvent = async (event) => {
     const res = await post('postEvent', event);
-    
-    console.log(res);
+
+    return res;
   };
 
   useEffect(() => {

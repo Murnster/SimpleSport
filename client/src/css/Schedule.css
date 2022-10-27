@@ -10,3 +10,14 @@
 .scheduleHeader {
     margin: 10px;
 }
+
+.createEventFooter {
+    margin: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+}
+
+.createEventFooter button {
+    margin-right: 10px;
+}

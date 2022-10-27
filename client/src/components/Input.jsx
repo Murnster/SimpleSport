@@ -2,7 +2,7 @@ import React from "react";
 
 import "../css/Input.css"
 
-const Input = ({id, type, title, helper, options = {}}) => {
+const Input = ({id, type, title, helper, options = []}) => {
     let inputType;
     let inputSize = "small";
 
@@ -12,16 +12,27 @@ const Input = ({id, type, title, helper, options = {}}) => {
                 <textarea id={id} className="shortTextInput"></textarea>
             );
             break;
-        case 'selector':
-            inputSize = "large";
+        case 'select':
             inputType = (
-                <textarea id={id} className="longTextInput"></textarea>
+                <select id={id} className="selectInput">
+                    <option value="-1">Select a type</option>
+                    {
+                        options.map((opt) => {
+                            return <option key={opt.typeID} value={opt.typeID}>{opt.label}</option>
+                        })
+                    }
+                </select>
             );
             break;
         case 'longtext':
             inputSize = "large";
             inputType = (
                 <textarea id={id} className="longTextInput"></textarea>
+            );
+            break;
+        case 'date':
+            inputType = (
+                <input id={id} className="datetimeInput" type="datetime-local"></input>
             );
             break;
         default:

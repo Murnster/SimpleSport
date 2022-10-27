@@ -1,5 +1,4 @@
 import React from "react";
-import Moment from 'react-moment';
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -76,8 +75,6 @@ const Dashboard = () => {
       ]
     };
 
-    
-
     const events = data.events.map(ev => {
       return { title: ev.title, start: ev.startDate, end: ev.endDate };
     });
@@ -91,7 +88,7 @@ const Dashboard = () => {
           initialView="listWeek"
           height={475}
           events={events}
-          headerToolbar={{start: "title", center: '', end: ''}}
+          headerToolbar={{start: "title", center: '', end: 'prev,next'}}
           eventClick={() => {}}
         />
       </div>
