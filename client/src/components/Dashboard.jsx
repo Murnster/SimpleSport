@@ -1,4 +1,6 @@
 import React from "react";
+import { useState, useEffect } from "react";
+import { get, post } from "../network"
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -9,41 +11,73 @@ import BigContainer from "./BigContainer";
 import SmallContainer from "./SmallContainer";
 
 const Dashboard = () => {
+    const [dashboardData, getDashboardData] = useState({events: [], roster: []});
+
+    const fetchDashboard = async () => {
+      let data = {
+        events: [],
+        roster: []
+      };
+
+      const result = Promise.all([fetchEvents(), fetchRoster()]).then((arrays) => {
+        data.events = arrays[0];
+        data.roster = arrays[1];
+      });
+      
+      getDashboardData(data);
+    };
+
+    const fetchEvents = async () => {
+      return await get('events');
+    };
+
+    const fetchRoster = async () => {
+      return await get('roster');
+    };
+
+    useEffect(() => {
+      const dashboardEffect = async () => {
+        await fetchDashboard();
+      }
+  
+      dashboardEffect();
+    }, []);
+
     const data = {
-      events: [
-        {
-          id: 1,
-          title: 'Tuesday Practice',
-          type: 1,
-          startDate: '2022-10-25T16:30:00',
-          endDate: '2022-10-25T18:30:00',
-          desc: '4:30 start'
-        },
-        {
-          id: 2,
-          title: 'Wednesday Practice',
-          type: 1,
-          startDate: '2022-10-26T16:30:00',
-          endDate: '2022-10-26T18:30:00',
-          desc: '4:30 start'
-        },
-        {
-          id: 3,
-          title: 'Friday Practice',
-          type: 1,
-          startDate: '2022-10-28T16:30:00',
-          endDate: '2022-10-28T18:30:00',
-          desc: '4:30 start'
-        },
-        {
-          id: 4,
-          title: 'StFX at Acadia',
-          type: 2,
-          startDate: '2022-10-29T14:00:00',
-          endDate: '2022-10-29T16:00:00',
-          desc: '2pm KO'
-        }
-      ],
+      // events: [
+      //   {
+      //     id: 1,
+      //     title: 'Tuesday Practice',
+      //     type: 1,
+      //     startDate: '2022-10-25T16:30:00',
+      //     endDate: '2022-10-25T18:30:00',
+      //     desc: '4:30 start'
+      //   },
+      //   {
+      //     id: 2,
+      //     title: 'Wednesday Practice',
+      //     type: 1,
+      //     startDate: '2022-10-26T16:30:00',
+      //     endDate: '2022-10-26T18:30:00',
+      //     desc: '4:30 start'
+      //   },
+      //   {
+      //     id: 3,
+      //     title: 'Friday Practice',
+      //     type: 1,
+      //     startDate: '2022-10-28T16:30:00',
+      //     endDate: '2022-10-28T18:30:00',
+      //     desc: '4:30 start'
+      //   },
+      //   {
+      //     id: 4,
+      //     title: 'StFX at Acadia',
+      //     type: 2,
+      //     startDate: '2022-10-29T14:00:00',
+      //     endDate: '2022-10-29T16:00:00',
+      //     desc: '2pm KO'
+      //   }
+      // ],
       roster: [
         {
           id: 1,
@@ -74,8 +108,8 @@ const Dashboard = () => {
         }
       ]
     };
-
-    const events = data.events.map(ev => {
+    
+    const events = dashboardData.events.map(ev => {
       return { title: ev.title, start: ev.startDate, end: ev.endDate };
     });
     

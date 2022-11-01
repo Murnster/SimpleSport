@@ -31,6 +31,7 @@ const Schedule = () => {
     <div className="createEvent">
       <div className="createEventHeader"></div>
       <div className="createEventBody">
+        <input id="newEventID" type={'hidden'} value="-1"></input>
         <div className="row">
           <Input id="newEventTitle" type="shorttext" title="Event Title" helper="Name of your event" />
           <Input id="newEventType" type="select" title="Event Type" helper="Select Type of your event" options={fakeDataTypes} />
@@ -46,11 +47,32 @@ const Schedule = () => {
       <div className="createEventFooter">
         <button onClick={async () => await saveEvent()}>Submit Event</button>
         <button onClick={() => setOpenPopup(false)}>Cancel Event</button>
+        <button onClick={async () => await deleteEvent(document.getElementById('newEventID').value)}>Delete Event</button>
       </div>
     </div>
   );
   
+  const editEvent = (event) => {
+    setOpenPopup(true);
+    setTimeout(() => {
+      const id = document.getElementById('newEventID');
+      const title = document.getElementById('newEventTitle');
+      const type = document.getElementById('newEventType');
+      const start = document.getElementById('newEventStart');
+      const end = document.getElementById('newEventEnd');
+      const desc = document.getElementById('newEventDesc');
+      
+      id.value = event.id;
+      title.value = event.title;
+      type.value = event.extendedProps.typeID;
+      start.value = moment(event.start).format('YYYY-MM-DDThh:mm:ss');
+      end.value = moment(event.end).format('YYYY-MM-DDThh:mm:ss');
+      desc.value = event.extendedProps.desc;
+    }, 50);
+  }
+
   const saveEvent = async () => {
+    const id = document.getElementById('newEventID');
     const title = document.getElementById('newEventTitle');
     const type = document.getElementById('newEventType');
     const start = document.getElementById('newEventStart');
@@ -75,15 +97,14 @@ const Schedule = () => {
     }
     
     const payload = {
+      id: id.value,
       title: title.value,
       typeID: +type.value,
       startDate: start.value,
       endDate: end.value,
       desc: desc.value
     };
-
-    console.log(start.value, moment(start.value).format('YYYY-MM-DD hh:mm:ss'));
-    console.log('did i pass the test?', payload);
+    
     const result = await postEvent(payload);
 
     if (result.success) {
@@ -92,7 +113,24 @@ const Schedule = () => {
     } else {
       console.error('There was a failure trying to save this event');
     }
-  }
+  };
+
+  const deleteEvent = async (eventID) => {
+    if (eventID === "-1") {
+      setOpenPopup(false);
+    } else {
+      if (window.confirm('Are you sure you want to delete this event?')) {
+        const res = await post('deleteEvent', {
+          id: eventID
+        });
+  
+        if (res.success) {
+          fetchSchedule();
+          setOpenPopup(false);
+        }
+      }
+    }
+  };
 
   const postEvent = async (event) => {
     const res = await post('postEvent', event);
@@ -108,9 +146,9 @@ const Schedule = () => {
     scheduleEffect();
   }, []);
 
-  const events = scheduleData.map(ev => {
-      return { title: ev.title, start: ev.startDate, end: ev.endDate };
-  });
+  // const events = scheduleData.map(ev => {
+  //     return { id: ev.id, title: ev.title, start: ev.startDate, end: ev.endDate, typeID: ev.typeID, desc: ev.desc };
+  // });
   
   const calendar = (
     <div>
@@ -125,7 +163,10 @@ const Schedule = () => {
           }
           initialView="dayGridMonth"
           height={750}
-          events={events}
+          events={scheduleData.map(ev => {
+            return { id: ev.id, title: ev.title, start: ev.startDate, end: ev.endDate, typeID: ev.typeID, desc: ev.desc };
+          })}
+          eventClick={info => editEvent(info.event)}
         />
       </div>
       {  
