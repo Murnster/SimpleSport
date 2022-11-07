@@ -1,6 +1,4 @@
-// hooks
-import { useEffect, useState } from "react";
-import { get } from "./network";
+import { useState } from "react";
 
 import './css/App.css';
 import './css/Schedule.css';
@@ -13,27 +11,7 @@ import Messenger from "./components/Messenger";
 import System from "./components/System";
 
 const App = () => {
-  const [dashboardData, getDashboardData] = useState([{}]);
-  
-  const fetchDashboard = async () => {
-    const data = await get('events');
-    getDashboardData(data);
-  };
-
-  useEffect(() => {
-    const dashboardEffect = async () => {
-      await fetchDashboard();
-    };
-
-    dashboardEffect();
-  }, []);
-  
-  console.log(dashboardData);
   const [screen, setScreen] = useState('Dashboard');
-
-  const changeScreen = event => {
-    setScreen(screen => event)
-  };
   
   return (
     <div className="app">

@@ -26,31 +26,6 @@ const Schedule = () => {
     { typeID: "1", label: 'Practice' },
     { typeID: "2", label: 'Game' }
   ];
-
-  const eventPopup = (
-    <div className="createEvent">
-      <div className="createEventHeader"></div>
-      <div className="createEventBody">
-        <input id="newEventID" type={'hidden'} value="-1"></input>
-        <div className="row">
-          <Input id="newEventTitle" type="shorttext" title="Event Title" helper="Name of your event" />
-          <Input id="newEventType" type="select" title="Event Type" helper="Select Type of your event" options={fakeDataTypes} />
-        </div>
-        <div className="row">
-          <Input id="newEventStart" type="date" title="Event Start Time" helper="When does this event start" />
-          <Input id="newEventEnd" type="date" title="Event End Time" helper="When does this event end" />
-        </div>
-        <div className="row">
-          <Input id="newEventDesc" type="longtext" title="Event Description" helper="Describe your event" />
-        </div>
-      </div>
-      <div className="createEventFooter">
-        <button onClick={async () => await saveEvent()}>Submit Event</button>
-        <button onClick={() => setOpenPopup(false)}>Cancel Event</button>
-        <button onClick={async () => await deleteEvent(document.getElementById('newEventID').value)}>Delete Event</button>
-      </div>
-    </div>
-  );
   
   const editEvent = (event) => {
     setOpenPopup(true);
@@ -123,7 +98,7 @@ const Schedule = () => {
         const res = await post('deleteEvent', {
           id: eventID
         });
-  
+        
         if (res.success) {
           fetchSchedule();
           setOpenPopup(false);
@@ -145,11 +120,34 @@ const Schedule = () => {
 
     scheduleEffect();
   }, []);
-
-  // const events = scheduleData.map(ev => {
-  //     return { id: ev.id, title: ev.title, start: ev.startDate, end: ev.endDate, typeID: ev.typeID, desc: ev.desc };
-  // });
   
+  console.log(scheduleData);
+  
+  const eventPopup = (
+    <div className="createEvent">
+      <div className="createEventHeader"></div>
+      <div className="createEventBody">
+        <input id="newEventID" type={'hidden'} value="-1"></input>
+        <div className="row">
+          <Input id="newEventTitle" type="shorttext" title="Event Title" helper="Name of your event" />
+          <Input id="newEventType" type="select" title="Event Type" helper="Select Type of your event" options={fakeDataTypes} />
+        </div>
+        <div className="row">
+          <Input id="newEventStart" type="date" title="Event Start Time" helper="When does this event start" />
+          <Input id="newEventEnd" type="date" title="Event End Time" helper="When does this event end" />
+        </div>
+        <div className="row">
+          <Input id="newEventDesc" type="longtext" title="Event Description" helper="Describe your event" />
+        </div>
+      </div>
+      <div className="createEventFooter">
+        <button onClick={async () => await saveEvent()}>Submit Event</button>
+        <button onClick={() => setOpenPopup(false)}>Cancel Event</button>
+        <button onClick={async () => await deleteEvent(document.getElementById('newEventID').value)}>Delete Event</button>
+      </div>
+    </div>
+  );
+
   const calendar = (
     <div>
       <div className="scheduleHeader">

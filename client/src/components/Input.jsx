@@ -1,11 +1,12 @@
 import React from "react";
 
+import moment from "moment";
 import "../css/Input.css"
 
 const Input = ({id, type, title, helper, options = []}) => {
     let inputType;
     let inputSize = "small";
-
+    console.log(options);
     switch (type) {
         case 'shorttext':
             inputType = (
@@ -18,7 +19,7 @@ const Input = ({id, type, title, helper, options = []}) => {
                     <option value="-1">Select a type</option>
                     {
                         options.map((opt) => {
-                            return <option key={opt.typeID} value={opt.typeID}>{opt.label}</option>
+                            return <option key={opt.typeID} value={opt.typeID}>{opt.title}</option>
                         })
                     }
                 </select>
@@ -32,7 +33,7 @@ const Input = ({id, type, title, helper, options = []}) => {
             break;
         case 'date':
             inputType = (
-                <input id={id} className="datetimeInput" type="datetime-local"></input>
+                <input id={id} className="datetimeInput" type="datetime-local" defaultValue={moment().format('YYYY-MM-DDThh:mm:ss')}></input>
             );
             break;
         default:

@@ -1,0 +1,55 @@
+.roster {
+    border: 1px solid black;
+    border-radius: 15px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.rosterHeader {
+    margin: 10px;
+}
+
+.rosterTable {
+    margin: 10px;
+    width: 98%;
+    height: 700px;
+    overflow: hidden;
+}
+
+.rosterTableHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.rosterTableRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.tableCell {
+    width: 100%;
+    height: 35px;
+    border: 1px solid black;
+    text-align: center;
+    line-height: 35px;
+}
+
+.tableCell h3 {
+    margin: 0px;
+}
+
+.createMemberFooter {
+    margin: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+}
+
+.createMemberFooter button {
+    margin-right: 10px;
+}

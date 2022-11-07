@@ -6,9 +6,12 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
 
+import moment from "moment";
+
 import { faCalendar, faCalendarCheck, faPeopleGroup, faMessage } from '@fortawesome/free-solid-svg-icons'
 import BigContainer from "./BigContainer";
 import SmallContainer from "./SmallContainer";
+import Input from "./Input";
 
 const Dashboard = () => {
     const [dashboardData, getDashboardData] = useState({events: [], roster: []});
@@ -16,15 +19,19 @@ const Dashboard = () => {
     const fetchDashboard = async () => {
       let data = {
         events: [],
-        roster: []
+        roster: [],
+        eventTypes: [],
+        memberTypes: []
       };
 
-      const result = Promise.all([fetchEvents(), fetchRoster()]).then((arrays) => {
+      const result = Promise.all([fetchEvents(), fetchRoster(), fetchEventTypes(), fetchMemberTypes()]).then((arrays) => {
         data.events = arrays[0];
         data.roster = arrays[1];
+        data.eventTypes = arrays[2];
+        data.memberTypes = arrays[3];
+      }).then(() => {
+        getDashboardData(data);
       });
-      
-      getDashboardData(data);
     };
 
     const fetchEvents = async () => {
@@ -35,6 +42,76 @@ const Dashboard = () => {
       return await get('roster');
     };
 
+    const fetchEventTypes = async () => {
+      return await get('eventTypes');
+    };
+
+    const fetchMemberTypes = async () => {
+      return await get('memberTypes');
+    };
+
+    const postEvent = async (event) => {
+      const res = await post('postEvent', event);
+  
+      return res;
+    };
+
+    const cancelQuickEvent = () => {
+      document.getElementById('newEventTitle').value='';
+      document.getElementById('newEventType').value = 0;
+      document.getElementById('newEventStart').value = moment().format('YYYY-MM-DDThh:mm:ss');
+      document.getElementById('newEventEnd').value = moment().add(1, 'h').format('YYYY-MM-DDThh:mm:ss');
+      document.getElementById('newEventDesc').value='';
+    };
+
+    const quickSaveEvent = async () => {
+      const id = document.getElementById('newEventID');
+      const title = document.getElementById('newEventTitle');
+      const type = document.getElementById('newEventType');
+      const start = document.getElementById('newEventStart');
+      const end = document.getElementById('newEventEnd');
+      const desc = document.getElementById('newEventDesc');
+  
+      if (title.value === "") {
+        title.focus();
+        return;
+      } else if (type.value === "-1") {
+        type.focus();
+        return;
+      } else if (start.value === "" || !start.value) {
+        start.focus();
+        return;
+      } else if (end.value === "" || !end.value) {
+        end.focus();
+        return;
+      } else if (desc.value === "" || desc.value.length > 255) {
+        desc.focus();
+        return;
+      }
+      
+      const payload = {
+        id: id.value,
+        title: title.value,
+        typeID: +type.value,
+        startDate: start.value,
+        endDate: end.value,
+        desc: desc.value
+      };
+      
+      const result = await postEvent(payload);
+  
+      if (result.success) {
+        await fetchEvents().then((eventsPayload) => getDashboardData({
+          events: eventsPayload,
+          roster: dashboardData.roster,
+          eventTypes: dashboardData.eventTypes,
+          memberTypes: dashboardData.memberTypes
+        }));
+      } else {
+        console.error('There was a failure trying to save this event');
+      }
+    };
+
     useEffect(() => {
       const dashboardEffect = async () => {
         await fetchDashboard();
@@ -43,84 +120,19 @@ const Dashboard = () => {
       dashboardEffect();
     }, []);
 
-    const data = {
-      // events: [
-      //   {
-      //     id: 1,
-      //     title: 'Tuesday Practice',
-      //     type: 1,
-      //     startDate: '2022-10-25T16:30:00',
-      //     endDate: '2022-10-25T18:30:00',
-      //     desc: '4:30 start'
-      //   },
-      //   {
-      //     id: 2,
-      //     title: 'Wednesday Practice',
-      //     type: 1,
-      //     startDate: '2022-10-26T16:30:00',
-      //     endDate: '2022-10-26T18:30:00',
-      //     desc: '4:30 start'
-      //   },
-      //   {
-      //     id: 3,
-      //     title: 'Friday Practice',
-      //     type: 1,
-      //     startDate: '2022-10-28T16:30:00',
-      //     endDate: '2022-10-28T18:30:00',
-      //     desc: '4:30 start'
-      //   },
-      //   {
-      //     id: 4,
-      //     title: 'StFX at Acadia',
-      //     type: 2,
-      //     startDate: '2022-10-29T14:00:00',
-      //     endDate: '2022-10-29T16:00:00',
-      //     desc: '2pm KO'
-      //   }
-      // ],
-      roster: [
-        {
-          id: 1,
-          name: 'Ryan Murney',
-          phone: '9024021227',
-          roleID: 1,
-          emContactName: 'Gerry Murney',
-          emContactRelation: 'Father',
-          emContactPhone: '9022925560'
-        },
-        {
-          id: 2,
-          name: 'Cairan Boone',
-          phone: '9024506078',
-          roleID: 1,
-          emContactName: 'Travis Best',
-          emContactRelation: 'Uncle',
-          emContactPhone: '6508475598'
-        },
-        {
-          id: 3,
-          name: 'James Alder',
-          phone: '9024663456',
-          roleID: 2,
-          emContactName: 'Anna Alder',
-          emContactRelation: 'Partner',
-          emContactPhone: '9027554312'
-        }
-      ]
-    };
-    
     const events = dashboardData.events.map(ev => {
       return { title: ev.title, start: ev.startDate, end: ev.endDate };
     });
     
     const calendar = (
       <div className="dashCalContainer">
-        <FullCalendar 
-          plugins={ 
+        <FullCalendar
+          plugins={
             [ dayGridPlugin, listPlugin ]
           }
           initialView="listWeek"
           height={475}
+          firstDay={1}
           events={events}
           headerToolbar={{start: "title", center: '', end: 'prev,next'}}
           eventClick={() => {}}
@@ -130,31 +142,43 @@ const Dashboard = () => {
 
     const upcomingEvents = (
       <div className="quickEvent">
-        <div className="quickEventHeader">Quickly create a new event for you team!</div>
+        <div className="quickEventHeader">Quickly create a new event for your team!</div>
+        <input id="newEventID" type={'hidden'} value="-1"></input>
         <div className="quickEventBody">
-          <h4>Title</h4>
-          <textarea className="quickEventInput"></textarea>
-          <h4>Start Date/Time</h4>
-          <textarea className="quickEventInput"></textarea>
-          <h4>End Date/Time</h4>
-          <textarea className="quickEventInput"></textarea>
-          <h4>Type</h4>
-          <textarea className="quickEventInput"></textarea>
-          <h4>Description (255 character max)</h4>
-          <textarea className="quickEventInput quickEventInputDesc"></textarea>
+          <Input id="newEventTitle" type="shorttext" title="Event Title" helper="Name of your event" />
+          <Input id="newEventType" type="select" title="Event Type" helper="Select Type of your event" options={dashboardData.eventTypes} />
+          <Input id="newEventStart" type="date" title="Event Start Time" helper="When does this event start" />
+          <Input id="newEventEnd" type="date" title="Event End Time" helper="When does this event end" />
+          <Input id="newEventDesc" type="longtext" title="Event Description" helper="Describe your event" />
         </div>
         <div className="quickEventFooter">
-          <button className="quickEventSubmit">Create Event</button>
+          <button onClick={async () => await quickSaveEvent()} className="quickEventSubmit">Create Event</button>
+          <button onClick={() => cancelQuickEvent()} className="quickEventCancel">Cancel</button>
         </div>
       </div>
     );
+    
+    const fakeMemberTypes = {
+      1: 'Player',
+      2: 'Coach',
+      3: 'Other'
+    };
 
-    const roster = data.roster.map((member) => 
-      <div key={'member-' + member.id.toString()} className="upcomingRow">
-        <div>{member.name}</div>
+    const dashRosterHead = (
+      <div key={'dashRosterHead'} className="dashRosterRow dashRosterHead">
+        <div>Name</div>
+        <div>Role</div>
+        <div>Phone</div>
+        <div>Phone</div>
+      </div>
+    );
+    
+    const dashRoster = dashboardData.roster.map((member) =>
+      <div key={'member-' + member.memberID.toString()} className="dashRosterRow">
+        <div>{member.firstName} {member.lastName}</div>
+        <div>{dashboardData.memberTypes.find(t => t.typeID === member.memberTypeID)?.title}</div>
         <div>{member.phone}</div>
-        <div>{member.emContactName}</div>
-        <div>{member.emContactPhone}</div>
+        <div>{member.email}</div>
       </div>
     );
 
@@ -174,7 +198,7 @@ const Dashboard = () => {
             <SmallContainer headIcon={faCalendarCheck} title={"Quick Event"} content={ upcomingEvents } />
           </div>
           <div className="row">
-            <BigContainer headIcon={faPeopleGroup} title={"Roster"} content={ roster } />
+            <BigContainer headIcon={faPeopleGroup} title={"Roster"} content={ [dashRosterHead, dashRoster] } />
             <SmallContainer headIcon={faMessage} title={"Message Team"} content= { messageTeam } />
           </div>
         </div>

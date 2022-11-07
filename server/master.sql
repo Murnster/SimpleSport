@@ -19,3 +19,5 @@ INSERT INTO `memberTypes` VALUES (null, 'Trainer');
 
 ALTER TABLE events MODIFY COLUMN startDate datetime NOT NULL;
 ALTER TABLE events MODIFY COLUMN endDate datetime NOT NULL;
+
+INSERT INTO `memberTypes` VALUES (null, 'Other');

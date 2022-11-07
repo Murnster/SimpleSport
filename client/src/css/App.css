@@ -106,7 +106,7 @@ body {
     flex-direction: column;
 }
 
-.containerBody .upcomingRow:first-of-type {
+.containerBody .dashRosterRow:first-of-type {
     border-top: 0;
 }
 
@@ -120,7 +120,7 @@ body {
     margin-bottom: 5px !important;
 }
 
-.upcomingRow {
+.dashRosterRow {
     width: 100%;
     height: 50px;
     border-top: 1px solid black;
@@ -129,6 +129,18 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+
+.dashRosterHead div {
+    font-weight: bold;
+}
+
+.dashRosterRow div:first-of-type {
+    margin-left: 5px;
+}
+
+.dashRosterRow div {
+    width: 25%;
 }
 
 .msgTeamBox {
@@ -177,7 +189,15 @@ body {
 .quickEventFooter {
     display: flex;
     margin-top: 10px;
-    justify-content: center;
+    justify-content: space-evenly;
+}
+
+.quickEventBody .input {
+    width: 95%;
+}
+
+.quickEventBody .inputHelper {
+    display: none;
 }
 
 .mr15 {

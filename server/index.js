@@ -33,6 +33,26 @@ app.get("/roster", (req, res) => {
     });
 });
 
+app.get("/memberTypes", (req, res) => {
+    db.query(`SELECT * FROM memberTypes`, (err, result) => {
+        if (err) { 
+            console.log(err); 
+        } else {
+            res.json(result);
+        }
+    });
+});
+
+app.get("/eventTypes", (req, res) => {
+    db.query(`SELECT * FROM eventTypes`, (err, result) => {
+        if (err) { 
+            console.log(err); 
+        } else {
+            res.json(result);
+        }
+    });
+});
+
 app.post('/postEvent', (req, res) => {
     const payload = req.body;
     let hasID = false;

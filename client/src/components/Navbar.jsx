@@ -12,15 +12,6 @@ const Navbar = ({ setScreen }) => {
 
   const navBarOpenClose = () => {
     setNavState(!navState);
-    
-    if (navState) {
-      console.log(navState, 'was true');  
-
-      
-    } else {
-      console.log(navState, 'was false');
-
-    }
   };
 
   return (
