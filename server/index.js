@@ -99,4 +99,50 @@ app.post('/deleteEvent', (req, res) => {
     }
 });
 
+app.post('/postMember', (req, res) => {
+    const payload = req.body;
+    let hasID = false;
+
+    if (payload.id) {
+        if (payload.id != '-1') {
+            hasID = true;
+        }
+    }
+
+    db.query(`${hasID ? 'REPLACE' : 'INSERT'} INTO roster VALUES (${hasID ? +payload.id : 'null'}, '${payload.fname}', '${payload.lname}', '${payload.memberTypeID}', '${payload.phone}', '${payload.email}', '${payload.emName}', '${payload.emPhone}', '${payload.emEmail}')`, (err, result) => {
+        if (err) { 
+            console.log(err);
+            res.end(JSON.stringify({
+                success: false,
+                result
+            }));
+        } else {
+            res.end(JSON.stringify({
+                success: true,
+                result
+            }));
+        }
+    });
+});
+
+app.post('/deleteMember', (req, res) => {
+    const payload = req.body;
+    
+    if (payload.id) {
+        db.query(`DELETE FROM roster WHERE memberID = ${payload.id}`, (err, result) => {
+            if (err) { 
+                console.log(err);
+            } else {
+                res.end(JSON.stringify({
+                    success: true
+                }));
+            }
+        });
+    } else {
+        res.end(JSON.stringify({
+            success: false
+        }));
+    }
+});
+
 app.listen(5000, () => {console.log("Server started on port 5000") });

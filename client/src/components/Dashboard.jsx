@@ -14,7 +14,7 @@ import SmallContainer from "./SmallContainer";
 import Input from "./Input";
 
 const Dashboard = () => {
-    const [dashboardData, getDashboardData] = useState({events: [], roster: []});
+    const [dashboardData, getDashboardData] = useState({events: [], roster: [], eventTypes: [], memberTypes: []});
 
     const fetchDashboard = async () => {
       let data = {

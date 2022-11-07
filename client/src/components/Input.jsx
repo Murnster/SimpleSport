@@ -6,7 +6,7 @@ import "../css/Input.css"
 const Input = ({id, type, title, helper, options = []}) => {
     let inputType;
     let inputSize = "small";
-    console.log(options);
+    
     switch (type) {
         case 'shorttext':
             inputType = (

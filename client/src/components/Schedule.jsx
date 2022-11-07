@@ -120,9 +120,7 @@ const Schedule = () => {
 
     scheduleEffect();
   }, []);
-  
-  console.log(scheduleData);
-  
+
   const eventPopup = (
     <div className="createEvent">
       <div className="createEventHeader"></div>
