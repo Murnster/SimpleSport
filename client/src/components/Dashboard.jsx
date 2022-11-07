@@ -24,7 +24,7 @@ const Dashboard = () => {
         memberTypes: []
       };
 
-      const result = Promise.all([fetchEvents(), fetchRoster(), fetchEventTypes(), fetchMemberTypes()]).then((arrays) => {
+      Promise.all([fetchEvents(), fetchRoster(), fetchEventTypes(), fetchMemberTypes()]).then((arrays) => {
         data.events = arrays[0];
         data.roster = arrays[1];
         data.eventTypes = arrays[2];
@@ -118,6 +118,7 @@ const Dashboard = () => {
       }
   
       dashboardEffect();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const events = dashboardData.events.map(ev => {
@@ -157,12 +158,6 @@ const Dashboard = () => {
         </div>
       </div>
     );
-    
-    const fakeMemberTypes = {
-      1: 'Player',
-      2: 'Coach',
-      3: 'Other'
-    };
 
     const dashRosterHead = (
       <div key={'dashRosterHead'} className="dashRosterRow dashRosterHead">

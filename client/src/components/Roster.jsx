@@ -5,7 +5,6 @@ import '../css/Roster.css';
 
 import { useState, useEffect } from "react";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPeopleGroup } from '@fortawesome/free-solid-svg-icons'
 import FullContainer from "./FullContainer";
 
@@ -17,24 +16,18 @@ const Roster = () => {
     const [rosterData, getRosterData] = useState({roster: [], memberTypes: []});
     const [openPopup, setOpenPopup] = useState(false);
 
-    // const fakeDataTypes = [
-    //     { typeID: "1", label: "Player" },
-    //     { typeID: "2", label: "Coach" },
-    //     { typeID: "3", label: "Other" }
-    // ];
-
     const fetchRosterData = async () => {
         let rosterData = {
             roster: [],
             memberTypes: []
         }
         
-        const result = Promise.all([fetchRoster(), fetchMemberTypes()]).then((arrays) => {
+        Promise.all([fetchRoster(), fetchMemberTypes()]).then((arrays) => {
             rosterData.roster = arrays[0];
             rosterData.memberTypes = arrays[1];
         }).then(() => {
-            getRosterData(rosterData)
-            console.log(rosterData);  
+            getRosterData(rosterData);
+            console.log(rosterData);
         });
     };
     
@@ -165,6 +158,7 @@ const Roster = () => {
         }
     
         rosterEffect();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const rosterRows = rosterData.roster.map((member) =>

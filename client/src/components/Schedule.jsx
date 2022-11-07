@@ -14,18 +14,31 @@ import Popup from "./Popup";
 import Input from "./Input";
 
 const Schedule = () => {
-  const [scheduleData, getScheduleData] = useState([{}]);
+  const [scheduleData, getScheduleData] = useState({events: [], eventTypes: []});
   const [openPopup, setOpenPopup] = useState(false);
 
   const fetchSchedule = async () => {
-    const data = await get('events');
-    getScheduleData(data);
+    let scheduleData = {
+      events: [],
+      eventTypes: []
+    };
+
+    Promise.all([fetchEvents(), fetchEventTypes()]).then((arrays) => {
+      scheduleData.events = arrays[0];
+      scheduleData.eventTypes = arrays[1];
+    }).then(() => {
+      getScheduleData(scheduleData);
+      console.log(scheduleData);
+    });
   };
 
-  const fakeDataTypes = [
-    { typeID: "1", label: 'Practice' },
-    { typeID: "2", label: 'Game' }
-  ];
+  const fetchEvents = async () => {
+    return await get('events');
+  };
+
+  const fetchEventTypes = async () => {
+    return await get('eventTypes');
+  };
   
   const editEvent = (event) => {
     setOpenPopup(true);
@@ -119,6 +132,7 @@ const Schedule = () => {
     }
 
     scheduleEffect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const eventPopup = (
@@ -128,7 +142,7 @@ const Schedule = () => {
         <input id="newEventID" type={'hidden'} value="-1"></input>
         <div className="row">
           <Input id="newEventTitle" type="shorttext" title="Event Title" helper="Name of your event" />
-          <Input id="newEventType" type="select" title="Event Type" helper="Select Type of your event" options={fakeDataTypes} />
+          <Input id="newEventType" type="select" title="Event Type" helper="Select Type of your event" options={scheduleData.eventTypes} />
         </div>
         <div className="row">
           <Input id="newEventStart" type="date" title="Event Start Time" helper="When does this event start" />
@@ -145,6 +159,8 @@ const Schedule = () => {
       </div>
     </div>
   );
+  
+  console.log(scheduleData);
 
   const calendar = (
     <div>
@@ -159,7 +175,7 @@ const Schedule = () => {
           }
           initialView="dayGridMonth"
           height={750}
-          events={scheduleData.map(ev => {
+          events={scheduleData?.events.map(ev => {
             return { id: ev.id, title: ev.title, start: ev.startDate, end: ev.endDate, typeID: ev.typeID, desc: ev.desc };
           })}
           eventClick={info => editEvent(info.event)}
