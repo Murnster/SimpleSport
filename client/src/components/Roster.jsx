@@ -185,7 +185,7 @@ const Roster = () => {
                     <Input id="newMemberEmail" type="shortText" title="Email" helper="Please enter email" />
                 </div>
                 <div className="row">
-                <Input id="newMemberType" type="select" title="Member Type" helper="Please select the type of this member" options={rosterData.memberTypes} />
+                <Input id="newMemberType" type="typeSelect" title="Member Type" helper="Please select the type of this member" options={rosterData.memberTypes} />
                 </div>
                 <div className="row">
                     <Input id="newMemberEmName" type="shortText" title="Emergency Contact" helper="Please enter name of emergency contact" />

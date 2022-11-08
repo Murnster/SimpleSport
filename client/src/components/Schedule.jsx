@@ -142,7 +142,7 @@ const Schedule = () => {
         <input id="newEventID" type={'hidden'} value="-1"></input>
         <div className="row">
           <Input id="newEventTitle" type="shorttext" title="Event Title" helper="Name of your event" />
-          <Input id="newEventType" type="select" title="Event Type" helper="Select Type of your event" options={scheduleData.eventTypes} />
+          <Input id="newEventType" type="typeSelect" title="Event Type" helper="Select Type of your event" options={scheduleData.eventTypes} />
         </div>
         <div className="row">
           <Input id="newEventStart" type="date" title="Event Start Time" helper="When does this event start" />
@@ -159,15 +159,12 @@ const Schedule = () => {
       </div>
     </div>
   );
-  
-  console.log(scheduleData);
 
   const calendar = (
     <div>
       <div className="scheduleHeader">
         <button onClick={() => setOpenPopup(true)} className="scheduleButton">Add Event</button>
       </div>
-      <div className="calendar"></div>
       <div className="dashCalContainer">
         <FullCalendar 
           plugins={ 

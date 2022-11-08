@@ -10,12 +10,12 @@ const Input = ({id, type, title, helper, options = []}) => {
     switch (type) {
         case 'shorttext':
             inputType = (
-                <textarea id={id} className="shortTextInput"></textarea>
+                <textarea id={id} name={id} className="shortTextInput"></textarea>
             );
             break;
-        case 'select':
+        case 'typeSelect':
             inputType = (
-                <select id={id} className="selectInput">
+                <select id={id} name={id} className="selectInput">
                     <option value="-1">Select a type</option>
                     {
                         options.map((opt) => {
@@ -25,20 +25,32 @@ const Input = ({id, type, title, helper, options = []}) => {
                 </select>
             );
             break;
+        case 'messengerSelect':
+            inputType = (
+                <select id={id} name={id} className="selectInput">
+                    <option value="-1">Send to all members</option>
+                    {
+                        options.map((opt) => {
+                            return <option key={opt.memberID} value={opt.memberID}>{opt.firstName} {opt.lastName}</option>
+                        })
+                    }
+                </select>
+            );
+            break;
         case 'longtext':
             inputSize = "large";
             inputType = (
-                <textarea id={id} className="longTextInput"></textarea>
+                <textarea id={id} name={id} className="longTextInput"></textarea>
             );
             break;
         case 'date':
             inputType = (
-                <input id={id} className="datetimeInput" type="datetime-local" defaultValue={moment().format('YYYY-MM-DDThh:mm:ss')}></input>
+                <input id={id} name={id} className="datetimeInput" type="datetime-local" defaultValue={moment().format('YYYY-MM-DDThh:mm:ss')}></input>
             );
             break;
         default:
             inputType = (
-                <textarea id={id} className="shortTextInput"></textarea>
+                <textarea id={id} name={id} className="shortTextInput"></textarea>
             );
     }
 

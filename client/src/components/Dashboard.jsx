@@ -147,7 +147,7 @@ const Dashboard = () => {
         <input id="newEventID" type={'hidden'} value="-1"></input>
         <div className="quickEventBody">
           <Input id="newEventTitle" type="shorttext" title="Event Title" helper="Name of your event" />
-          <Input id="newEventType" type="select" title="Event Type" helper="Select Type of your event" options={dashboardData.eventTypes} />
+          <Input id="newEventType" type="typeSelect" title="Event Type" helper="Select Type of your event" options={dashboardData.eventTypes} />
           <Input id="newEventStart" type="date" title="Event Start Time" helper="When does this event start" />
           <Input id="newEventEnd" type="date" title="Event End Time" helper="When does this event end" />
           <Input id="newEventDesc" type="longtext" title="Event Description" helper="Describe your event" />
