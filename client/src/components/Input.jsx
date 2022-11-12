@@ -3,10 +3,27 @@ import React from "react";
 import moment from "moment";
 import "../css/Input.css"
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronCircleDown } from '@fortawesome/free-solid-svg-icons'
+
 const Input = ({id, type, title, helper, options = []}) => {
     let inputType;
     let inputSize = "small";
-    
+
+    const multiSelectDrop = (id) => {
+        document.getElementById(id).classList.remove('display-none');
+        document.getElementById('overlay').classList.remove('display-none');
+    };
+
+    const multiSelectHide = (id) => {
+        var items = document.getElementsByClassName("dropdownMenu");
+
+        for (let i = 0; i < items.length; i++) {
+            items[i].classList.add('display-none');
+        }
+        document.getElementById("overlay").classList.add('display-none');
+    };
+
     switch (type) {
         case 'shorttext':
             inputType = (
@@ -28,7 +45,8 @@ const Input = ({id, type, title, helper, options = []}) => {
         case 'messengerSelect':
             inputType = (
                 <select id={id} name={id} className="selectInput">
-                    <option value="-1">Send to all members</option>
+                    <option value="-2">Send to all members</option>
+                    <option value="-1">Send to selected member types</option>
                     {
                         options.map((opt) => {
                             return <option key={opt.memberID} value={opt.memberID}>{opt.firstName} {opt.lastName}</option>
@@ -46,6 +64,23 @@ const Input = ({id, type, title, helper, options = []}) => {
         case 'date':
             inputType = (
                 <input id={id} name={id} className="datetimeInput" type="datetime-local" defaultValue={moment().format('YYYY-MM-DDThh:mm:ss')}></input>
+            );
+            break;
+        case 'multiSelect':
+            inputType = (
+                <div id={id}>
+                    <button className="multiSelectInput" onClick={(e) => multiSelectDrop('dropdownMenu-'+id)}><span>Select</span><FontAwesomeIcon icon={faChevronCircleDown}/></button>
+                    <div id={'dropdownMenu-'+id} className='dropdownMenu display-none'>
+                        <span value="-2" className="dropdownOption"><label><input type="checkbox" />Send to all members</label></span>
+                        <span value="-1" className="dropdownOption"><label><input type="checkbox" />Send to selected member type</label></span>
+                        {
+                            options.map((opt) => {
+                                return <span key={opt.memberID} value={opt.memberID} className="dropdownOption"><label><input type="checkbox" />{opt.firstName} {opt.lastName}</label></span>
+                            })
+                        }
+                    </div>
+                    <div id="overlay" className="display-none" onClick={() => multiSelectHide('dropdownMenu-'+id)}></div>
+                </div>
             );
             break;
         default:

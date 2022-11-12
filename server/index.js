@@ -146,9 +146,9 @@ app.post('/deleteMember', (req, res) => {
 });
 
 app.get("/messenger", (req, res) => {
-    db.query(`SELECT roster.memberID, roster.firstName, roster.lastName, memberTypes.title FROM roster INNER JOIN memberTypes on roster.memberTypeID = memberTypes.typeID`, (err, result) => {
-        if (err) { 
-            console.log(err); 
+    db.query(`SELECT roster.memberID, roster.firstName, roster.lastName, roster.email, roster.memberTypeID, roster.emContactName, roster.emEmail, memberTypes.title FROM roster INNER JOIN memberTypes on roster.memberTypeID = memberTypes.typeID`, (err, result) => {
+        if (err) {
+            console.log(err);
         } else {
             res.json(result);
         }

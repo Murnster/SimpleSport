@@ -28,7 +28,6 @@ const Schedule = () => {
       scheduleData.eventTypes = arrays[1];
     }).then(() => {
       getScheduleData(scheduleData);
-      console.log(scheduleData);
     });
   };
 
