@@ -70,7 +70,7 @@ body {
     border: 1px solid black;
     border-radius: 15px;
     width: 70%;
-    height: 550px;
+    height: 600px;
     display: flex;
     flex-direction: column;
 }
@@ -80,7 +80,7 @@ body {
     border: 1px solid black;
     border-radius: 15px;
     width: 30%;
-    height: 550px;
+    height: 600px;
     display: flex;
     flex-direction: column;
 }
@@ -146,13 +146,12 @@ body {
 .msgTeamBox {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100% !important;
 }
 
-.msgTeamText {
-    height: 75%;
-    resize: none;
-    margin: 10px;
+.msgTeamBox .inputLarge textarea {
+    height: 350px;
+    width: 95%;
 }
 
 .msgTeamFooter {

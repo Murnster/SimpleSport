@@ -21,3 +21,8 @@ ALTER TABLE events MODIFY COLUMN startDate datetime NOT NULL;
 ALTER TABLE events MODIFY COLUMN endDate datetime NOT NULL;
 
 INSERT INTO `memberTypes` VALUES (null, 'Other');
+
+ALTER TABLE `events` ADD location varchar(50) NOT NULL;
+UPDATE events SET location = 'Wolfville';
+
+CREATE TABLE `siteData` (`teamName` mediumtext NOT NULL, `homeScreen` mediumtext NOT NULL);

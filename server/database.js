@@ -5,4 +5,5 @@ module.exports = mysql.createConnection({
     user: 'root',
     password: 'password',
     database: 'simplesport',
+    multipleStatements: true
 });

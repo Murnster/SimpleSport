@@ -1,7 +1,7 @@
 import React from "react";
 
 import moment from "moment";
-import "../css/Input.css"
+import "../css/Input.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronCircleDown } from '@fortawesome/free-solid-svg-icons'
@@ -81,6 +81,16 @@ const Input = ({id, type, title, helper, options = []}) => {
                     </div>
                     <div id="overlay" className="display-none" onClick={() => multiSelectHide('dropdownMenu-'+id)}></div>
                 </div>
+            );
+            break;
+        case 'screenSelect':
+            inputType = (
+                <select id={id} name={id} className="selectInput">
+                    <option value="Dashboard">Dashboard</option>
+                    <option value="Schedule">Schedule</option>
+                    <option value="Roster">Roster</option>
+                    <option value="Messenger">Messenger</option>
+                </select>
             );
             break;
         default:

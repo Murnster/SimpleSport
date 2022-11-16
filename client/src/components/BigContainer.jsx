@@ -2,11 +2,11 @@ import React from "react";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const BigContainer = ({headIcon, title, content}) => {
+const BigContainer = ({headIcon, title, content, headerClick}) => {
     
     return (
         <div className="bigContainer">
-            <div className="containerHeader">
+            <div className="containerHeader" onClick={headerClick}>
                 <div className="containerHeaderIcon">
                     <FontAwesomeIcon icon={headIcon}/>
                 </div>

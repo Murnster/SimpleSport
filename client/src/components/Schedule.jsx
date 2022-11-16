@@ -12,10 +12,12 @@ import { get, post } from "../network";
 import FullContainer from "./FullContainer";
 import Popup from "./Popup";
 import Input from "./Input";
+import Tooltip from "./Tooltip";
 
 const Schedule = () => {
   const [scheduleData, getScheduleData] = useState({events: [], eventTypes: []});
   const [openPopup, setOpenPopup] = useState(false);
+  // const [openTooltip, setOpenToolTip] = useState(false);
 
   const fetchSchedule = async () => {
     let scheduleData = {
@@ -48,6 +50,7 @@ const Schedule = () => {
       const start = document.getElementById('newEventStart');
       const end = document.getElementById('newEventEnd');
       const desc = document.getElementById('newEventDesc');
+      const location = document.getElementById('newEventLocation');
       
       id.value = event.id;
       title.value = event.title;
@@ -55,8 +58,34 @@ const Schedule = () => {
       start.value = moment(event.start).format('YYYY-MM-DDThh:mm:ss');
       end.value = moment(event.end).format('YYYY-MM-DDThh:mm:ss');
       desc.value = event.extendedProps.desc;
+      location.value = event.extendedProps.location;
     }, 50);
   }
+
+  // const showTooltip = (baseElement, content) => {
+  //   setOpenToolTip(true);
+  //   setTimeout(() => {
+  //     const tooltip = document.getElementById('tooltipContent');
+  
+  //     tooltip.innerHTML = content;
+
+  //     console.log(baseElement);
+  //     const position = baseElement.getBoundingClientRect();
+  //     console.log(position);
+
+  //     tooltip.style.x = `${position.x}`;
+  //     tooltip.style.y = `${position.y}`;
+
+  //     tooltip.style.top = `${position.top}`;
+  //     tooltip.style.bottom = `${position.bottom}`;
+  //     tooltip.style.right = `${position.right}`;
+  //     tooltip.style.left = `${position.left}`;
+  //   }, 100);
+  // };
+
+  // const hideTooltip = () => {
+  //   setOpenToolTip(false);
+  // };
 
   const saveEvent = async () => {
     const id = document.getElementById('newEventID');
@@ -65,6 +94,7 @@ const Schedule = () => {
     const start = document.getElementById('newEventStart');
     const end = document.getElementById('newEventEnd');
     const desc = document.getElementById('newEventDesc');
+    const location = document.getElementById('newEventLocation');
 
     if (title.value === "") {
       title.focus();
@@ -81,6 +111,9 @@ const Schedule = () => {
     } else if (desc.value === "" || desc.value.length > 255) {
       desc.focus();
       return;
+    } else if (location.value === "" || location.value.length > 50) {
+      location.focus();
+      return;
     }
     
     const payload = {
@@ -89,7 +122,8 @@ const Schedule = () => {
       typeID: +type.value,
       startDate: start.value,
       endDate: end.value,
-      desc: desc.value
+      desc: desc.value,
+      location: location.value
     };
     
     const result = await postEvent(payload);
@@ -148,6 +182,9 @@ const Schedule = () => {
           <Input id="newEventEnd" type="date" title="Event End Time" helper="When does this event end" />
         </div>
         <div className="row">
+          <Input id="newEventLocation" type="shorttext" title="Event Location" helper="Where is your event?" />
+        </div>
+        <div className="row">
           <Input id="newEventDesc" type="longtext" title="Event Description" helper="Describe your event" />
         </div>
       </div>
@@ -160,7 +197,7 @@ const Schedule = () => {
   );
 
   const calendar = (
-    <div>
+    <div style={{postion: 'relative'}}>
       <div className="scheduleHeader">
         <button onClick={() => setOpenPopup(true)} className="scheduleButton">Add Event</button>
       </div>
@@ -172,9 +209,11 @@ const Schedule = () => {
           initialView="dayGridMonth"
           height={750}
           events={scheduleData?.events.map(ev => {
-            return { id: ev.id, title: ev.title, start: ev.startDate, end: ev.endDate, typeID: ev.typeID, desc: ev.desc };
+            return { id: ev.id, title: ev.title, start: ev.startDate, end: ev.endDate, typeID: ev.typeID, desc: ev.desc, location: ev.location };
           })}
           eventClick={info => editEvent(info.event)}
+          // eventMouseEnter={info => showTooltip(info.el, info.event.extendedProps.desc)}
+          // eventMouseLeave={() => hideTooltip()}
         />
       </div>
       {  
@@ -182,6 +221,12 @@ const Schedule = () => {
         <Popup title="Create New Event" content={eventPopup} closePopup={() => setOpenPopup(false)} /> :
         null
       }
+      {/* {
+        openTooltip ?
+        <Tooltip />
+        :
+        null
+      } */}
     </div>
   );
 

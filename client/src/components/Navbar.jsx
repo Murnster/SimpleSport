@@ -24,7 +24,7 @@ const Navbar = ({ setScreen }) => {
           <div onClick={() => setScreen('Schedule')} className="sideNavItem"><FontAwesomeIcon icon={faChevronRight}/><h3>Schedule</h3></div>
           <div onClick={() => setScreen('Roster')} className="sideNavItem"><FontAwesomeIcon icon={faChevronRight}/><h3>Roster</h3></div>
           <div onClick={() => setScreen('Messenger')} className="sideNavItem"><FontAwesomeIcon icon={faChevronRight}/><h3>Messenger</h3></div>
-          <div onClick={() => setScreen('System')} className="sideNavItem"><FontAwesomeIcon icon={faChevronRight}/><h3>System Settings</h3></div>
+          <div onClick={() => setScreen('System')} className="sideNavItem"><FontAwesomeIcon icon={faChevronRight}/><h3>Settings</h3></div>
       </div>
     </div>
   );

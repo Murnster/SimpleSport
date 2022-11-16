@@ -63,7 +63,7 @@ app.post('/postEvent', (req, res) => {
         }
     }
 
-    db.query(`${hasID ? 'REPLACE' : 'INSERT'} INTO events VALUES (${hasID ? +payload.id : 'null'}, '${payload.title}', '${payload.startDate}', '${payload.endDate}', '${payload.desc}', '${payload.typeID}')`, (err, result) => {
+    db.query(`${hasID ? 'REPLACE' : 'INSERT'} INTO events VALUES (${hasID ? +payload.id : 'null'}, '${payload.title}', '${payload.startDate}', '${payload.endDate}', '${payload.desc}', '${payload.typeID}', '${payload.location}')`, (err, result) => {
         if (err) { 
             console.log(err);
             res.end(JSON.stringify({
@@ -151,6 +151,89 @@ app.get("/messenger", (req, res) => {
             console.log(err);
         } else {
             res.json(result);
+        }
+    });
+});
+
+app.get("/siteData", (req, res) => {
+    db.query(`SELECT * FROM siteData`, (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(result);
+        }
+    });
+});
+
+
+app.post("/postSiteData", (req, res) => {
+    const payload = req.body;
+    
+    const queries = [
+        `UPDATE siteData SET teamName = "${payload.teamName}";`,
+        `UPDATE siteData SET homeScreen = "${payload.homeScreen}";`
+    ];
+    
+    db.query(queries.join(" "), (err, result) => {
+        if (err) { 
+            console.log(err);
+        } else {
+            res.end(JSON.stringify({
+                success: true,
+                result
+            }));
+        }
+    });
+});
+
+app.post('/postEventType', (req, res) => {
+    const payload = req.body;
+    let hasID = false;
+
+    if (payload.id) {
+        if (payload.id != '-1') {
+            hasID = true;
+        }
+    }
+
+    db.query(`${hasID ? 'REPLACE' : 'INSERT'} INTO eventTypes VALUES (${hasID ? +payload.id : 'null'}, '${payload.title}')`, (err, result) => {
+        if (err) { 
+            console.log(err);
+            res.end(JSON.stringify({
+                success: false,
+                result
+            }));
+        } else {
+            res.end(JSON.stringify({
+                success: true,
+                result
+            }));
+        }
+    });
+});
+
+app.post('/postMemberType', (req, res) => {
+    const payload = req.body;
+    let hasID = false;
+
+    if (payload.id) {
+        if (payload.id != '-1') {
+            hasID = true;
+        }
+    }
+
+    db.query(`${hasID ? 'REPLACE' : 'INSERT'} INTO memberTypes VALUES (${hasID ? +payload.id : 'null'}, '${payload.title}')`, (err, result) => {
+        if (err) { 
+            console.log(err);
+            res.end(JSON.stringify({
+                success: false,
+                result
+            }));
+        } else {
+            res.end(JSON.stringify({
+                success: true,
+                result
+            }));
         }
     });
 });

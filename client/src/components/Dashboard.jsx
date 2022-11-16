@@ -2,6 +2,8 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { get, post } from "../network"
 
+import emailjs from '@emailjs/browser';
+
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
@@ -23,7 +25,7 @@ const Dashboard = () => {
         eventTypes: [],
         memberTypes: []
       };
-
+      
       Promise.all([fetchEvents(), fetchRoster(), fetchEventTypes(), fetchMemberTypes()]).then((arrays) => {
         data.events = arrays[0];
         data.roster = arrays[1];
@@ -71,7 +73,8 @@ const Dashboard = () => {
       const start = document.getElementById('newEventStart');
       const end = document.getElementById('newEventEnd');
       const desc = document.getElementById('newEventDesc');
-  
+      const location = document.getElementById('newEventlocation');
+
       if (title.value === "") {
         title.focus();
         return;
@@ -87,6 +90,9 @@ const Dashboard = () => {
       } else if (desc.value === "" || desc.value.length > 255) {
         desc.focus();
         return;
+      } else if (location.value === "" || location.value.length > 50) {
+        location.focus();
+        return;
       }
       
       const payload = {
@@ -95,7 +101,8 @@ const Dashboard = () => {
         typeID: +type.value,
         startDate: start.value,
         endDate: end.value,
-        desc: desc.value
+        desc: desc.value,
+        location: location.value
       };
       
       const result = await postEvent(payload);
@@ -112,10 +119,42 @@ const Dashboard = () => {
       }
     };
 
+    const dashboardMessage = async () => {
+      const subject = document.getElementById('subject');
+      const message = document.getElementById('message');
+      
+      if (subject.value === "") {
+        subject.focus();
+        return;
+      } else if (message.value === "") {
+        message.focus();
+        return;
+      }
+
+      dashboardData.roster.forEach(i => {
+        const emailPayload = {
+          subject: subject.value,
+          to_name: `${i.firstName} ${i.lastName}`,
+          from_name: 'SimpleSport Team',
+          team_name: 'Acadia Rugby',
+          message: message.value,
+          to_email: i.email,
+          to_cc: ''
+        };
+
+        emailjs.send('service_j3cty7o', 'template_fgud8hp', emailPayload, 'dK3Lze1u3Hmegsnoo')
+        .then((result) => {
+            console.log(result.text);
+        }, (error) => {
+            console.log(error.text);
+        });
+      });
+    };
+
     useEffect(() => {
       const dashboardEffect = async () => {
         await fetchDashboard();
-      }
+      };
   
       dashboardEffect();
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -150,6 +189,7 @@ const Dashboard = () => {
           <Input id="newEventType" type="typeSelect" title="Event Type" helper="Select Type of your event" options={dashboardData.eventTypes} />
           <Input id="newEventStart" type="date" title="Event Start Time" helper="When does this event start" />
           <Input id="newEventEnd" type="date" title="Event End Time" helper="When does this event end" />
+          <Input id="newEventLocation" type="shorttext" title="Event Location" helper="Where is your event" />
           <Input id="newEventDesc" type="longtext" title="Event Description" helper="Describe your event" />
         </div>
         <div className="quickEventFooter">
@@ -179,9 +219,10 @@ const Dashboard = () => {
 
     const messageTeam = (
       <div className="msgTeamBox">
-        <textarea className="msgTeamText" placeholder="Write something to your team!"></textarea>
+        <Input id="subject" type="shorttext" title="Subject" helper="" />
+        <Input id="message" type="longtext" title="Message" helper="" />
         <div className="msgTeamFooter">
-          <button className="msgTeamSend">Send Message to Team</button>
+          <button onClick={() => dashboardMessage()} className="msgTeamSend">Send Message to Team</button>
         </div>
       </div>
     );
