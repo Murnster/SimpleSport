@@ -1,5 +1,7 @@
 body {
     margin: 0;
+    background-color: #DCDCDC;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .hidden {
@@ -8,55 +10,121 @@ body {
 
 .sideNavBar {
     left: 0;
+    top: 0;
     height: 100%;
     width: 200px;
     position: fixed;
     background-color: black;
+    transition: 0.3s;
 }
 
-.sideBarHidden {
-    width: 35px !important;
+.sideNavBarHidden {
+    width: 60px !important;
+    transition: 0.3s;
+}
+
+.sideNavBarHidden h2 {
+    visibility: hidden;
+}
+
+.sideNavBarHidden .sideNavCompanyName {
+    visibility: hidden;
 }
 
 .sideNavHeader {
-    margin: 10px;
+    font-size: x-large;
+    margin: 20px 15px;
     display: flex;
     flex-direction: row;
     color: white;
-    height: 50px;
-    align-items: center;
+    justify-content: flex-start;
 }
 
-.sideNavHeader h2 {
-    margin-left: 20px;
+.sideNavHeader div {
+    margin-left: 10px;
 }
 
 .sideNavBody {
-    padding: 5px;
+    justify-content: center;
+    padding: 15px 5px 5px 10px;
 }
 
 .sideNavItem {
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
     color: white;
-    margin-left: 10px;
     display: flex;
     flex-direction: row;
+    justify-content: flex-start;
 }
 
-.sideNavItem h3 {
+.sideNavItem div {
+    width: 50px;
+    height: 30px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+.sideNavItem h2 {
+    font-size: 20px;
     margin: 0px;
 }
 
 .sideNavItem svg {
-    margin-right: 5px;
+    font-size: x-large;
+    margin-right: 10px;
+}
+
+.topNavBar {
+    top: 0;
+    width: 100%;
+    margin-left: 200px;
+    height: 60px;
+    position: fixed;
+    background-color: white;
+    z-index: 999999999999999;
+    transition: 0.3s;
+}
+
+.topNavOpen {
+    margin-left: 60px !important;
+}
+
+.topNavHeader {
+    color: white;
+    height: 60px;
+    align-items: center;
+    font-size: 24px;
+    display: flex;
+    flex-direction: row;
+}
+
+.topNavHeader svg {
+    font-size: xx-large;
+    padding: 20px 20px 20px 20px;
+    color: lightgray;
+}
+
+.topNavDivider {
+    border-right: 2px solid lightgray;
+    height: 100%;
+}
+
+.topNavSiteName {
+    padding: 10px;
+    color: black;
 }
 
 .mainContainer {
     margin-left: 200px;
+    margin-top: 50px;
     padding: 10px;
     display: flex;
     flex-direction: column;
+    transition: 0.4s;
+}
+
+.mainContainerHidden {
+    margin-left: 60px !important;
 }
 
 .row {
@@ -73,6 +141,7 @@ body {
     height: 600px;
     display: flex;
     flex-direction: column;
+    background-color: white;
 }
 
 .smallContainer {
@@ -83,6 +152,7 @@ body {
     height: 600px;
     display: flex;
     flex-direction: column;
+    background-color: white;
 }
 
 .containerHeader {

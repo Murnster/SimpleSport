@@ -5,7 +5,7 @@ import "../css/System.css";
 import Input from "./Input";
 import { get, post } from "../network";
 
-const System = () => {
+const System = ({updateSiteData}) => {
     const [systemData, getSysData] = useState({site: {}, eTypes: [], mTypes: []});
     const [sitePanel, openSitePanel] = useState(false);
     const [eventTypesPanel, openEventTypesPanel] = useState(false);
@@ -28,6 +28,7 @@ const System = () => {
             data.mTypes = arrays[2];
         }).then(() => {
             getSysData(data);
+            updateSiteData(data.site);
         });
     };
 

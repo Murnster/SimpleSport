@@ -5,6 +5,8 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    background-color: white;
+    margin-top: 10px;
 }
 
 .rosterHeader {

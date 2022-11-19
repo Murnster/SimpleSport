@@ -1,25 +1,26 @@
 import { useEffect, useState } from "react";
+import { get } from "./network";
 
 import './css/App.css';
 import './css/Schedule.css';
 
 import Dashboard from "./components/Dashboard";
-import Navbar from "./components/Navbar";
+import SideNavbar from "./components/SideNavbar";
 import Schedule from "./components/Schedule";
+import TopNavbar from "./components/TopNavbar";
 import Roster from "./components/Roster";
 import Messenger from "./components/Messenger";
 import System from "./components/System";
-import { get } from "./network";
 
 const App = () => {
   const [siteData, setSiteData] = useState({});
   const [screen, setScreen] = useState('');
+  const [openNav, setOpenNav] = useState(true);
 
   const fetchSite = async () => {
-
     Promise.all([get('siteData')]).then((arrays) => {
       setSiteData(arrays[0][0]);
-      setScreen(arrays[0][0].homeScreen);
+      setScreen(siteData?.homeScreen ?? arrays[0][0].homeScreen);
     });
   };
 
@@ -27,20 +28,25 @@ const App = () => {
     const getSiteData = async () => {
       await fetchSite();
     };
-
+    
     getSiteData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const setTopNav = () => {
+    setOpenNav(openNav => !openNav);
+  };
+
   return (
     <div className="app">
-      <Navbar setScreen={setScreen} />
-      <div className="mainContainer">
+      <TopNavbar siteName={siteData.teamName} setOpenNav={setTopNav} />
+      <SideNavbar setScreen={setScreen} openNav={!openNav}/>
+      <div className={!openNav ? "mainContainer" : "mainContainer mainContainerHidden"}>
           { screen === 'Dashboard' && <Dashboard /> }
           { screen === 'Schedule' && <Schedule /> }
           { screen === 'Roster' && <Roster /> }
           { screen === 'Messenger' && <Messenger /> }
-          { screen === 'System' && <System /> }
+          { screen === 'System' && <System updateSiteData={setSiteData} /> }
       </div>
     </div>
   )
