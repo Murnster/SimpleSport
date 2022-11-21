@@ -26,10 +26,15 @@ const Messenger = () => {
         Promise.all([fetchMessenger(), fetchMemberTypes()]).then((arrays) => {
           data.recipients = arrays[0];
           data.memberTypes = arrays[1];
+            
+          const staticOptions = [
+            { value: -2, label: 'Send to all members' },
+            { value: -1, label: 'Send to selected member types'}
+          ];
 
-          data.recipientOptions = arrays[0].map((r) => {
+          data.recipientOptions = staticOptions.concat(arrays[0].map((r) => {
             return { value: r.memberID, label: `${r.firstName} ${r.lastName}` };
-          });
+          }));
 
           data.messageTypeOptions = arrays[1].map((mt) => {
             return { value: mt.typeID, label: mt.title };
@@ -48,11 +53,11 @@ const Messenger = () => {
     };
 
     const handleRecipients = (e) => {
-        setSelectedMembers(e);
+        setSelectedMembers(e.map((e) => { return e.value }));
     };
 
     const handleType = (e) => {
-        setSelectedTypes(e);
+        setSelectedTypes(e.map((e) => { return e.value }));
     };
 
     const messenger = (
@@ -60,18 +65,20 @@ const Messenger = () => {
             <div className="messengerHeader">
                 <div className="row">
                     <Input 
+                        id='recipientSelect'
                         type="reactSelect"
                         title="Members"
                         helper="Select those being emailed"
                         options={messengerData?.recipientOptions}
                         changeProp={handleRecipients}
                         multiple={true}
-                        valueProp={messengerData?.recipientOptions?.find((type) => +type.value === selectedTypes)}
+                        valueProp={messengerData?.recipientOptions?.find((type) => +type.value === selectedMembers)}
                     />
                     <Input 
+                        id='memberTypeSelect'
                         type="reactSelect"
                         title="By Type"
-                        helper="Select a contact type you'd like to messenge or leave empty"
+                        helper="Select contact types you'd like to messenge or leave empty"
                         options={messengerData?.messageTypeOptions}
                         changeProp={handleType}
                         multiple={true}
@@ -96,23 +103,16 @@ const Messenger = () => {
                 </div>
             </div>
             <div className="messengerFooter">
-                <div className="ssButton" onClick={() => sendMessage()}>Send Message</div>
                 <input id="ccEmergency" type="checkbox"></input>Do you want to CC Emergency Contacts?
+                <div className="ssButton" onClick={() => sendMessage()}>Send Message</div>
             </div>
         </div>
     )
     
     const sendMessage = () => {
-        const recipientValues = [];
         let sendToEMCs = false;
-        const recipientSelectOptions = Array.from(document.getElementById('dropdownMenu-recipientSelect').children);
-        recipientSelectOptions.forEach((c) => {
-            if (c.querySelector('input').checked === true) {
-                recipientValues.push(c.getAttribute('value'));
-            }
-        });
 
-        const memberTypeSelect = document.getElementById('memberTypeSelect');
+        const recipientSelect = document.getElementById('recipientSelect');
         const team_name = document.getElementById('team_name');
         const subject = document.getElementById('subject');
         const to_name = document.getElementById('to_name');
@@ -120,8 +120,8 @@ const Messenger = () => {
         const message = document.getElementById('message');
         const ccEmergency = document.getElementById('ccEmergency');
         
-        if (recipientValues.length === 0) {
-            document.getElementById('recipientSelect').children[0].click();
+        if (selectedMembers.length === 0) {
+            recipientSelect.focus();
             return;
         } else if (team_name.value === "") {
             team_name.focus();
@@ -146,7 +146,8 @@ const Messenger = () => {
 
         let emailPayloadArray = [];
 
-        if (recipientValues.indexOf('-2') !== -1) {
+        if (selectedMembers.indexOf(-2) !== -1) {
+            console.log('if');
             messengerData.recipients.forEach(i => {
                 emailPayloadArray.push({
                     subject: subject.value,
@@ -158,72 +159,73 @@ const Messenger = () => {
                     to_cc: sendToEMCs ? i.emEmail : ''
                 });
             });
-        } else if (recipientValues.indexOf('-1') !== -1 && memberTypeSelect.value !== '-1') {
-            messengerData.recipients.forEach(i => {
-                if (memberTypeSelect.value === i.memberTypeID) {
-                    let index = recipientValues.indexOf(i.memberID);
+        } else if (selectedMembers.indexOf(-1) !== -1) {
+            console.log('else if');
+            messengerData.recipients.forEach(rep => {
+                let alreadyIncluded = false;
 
-                    if (index !== '-1') {
-                        recipientValues.splice(index, 1);
+                selectedMembers.forEach(id => {
+                    if (rep.memberID === id) {
+                        alreadyIncluded = true;
+
+                        emailPayloadArray.push({
+                            subject: subject.value,
+                            to_name: to_name.value,
+                            from_name: from_name.value,
+                            team_name: team_name.value,
+                            message: message.value,
+                            to_email: rep.email,
+                            to_cc: sendToEMCs ? rep.emEmail : ''
+                        });
                     }
+                });
 
+                selectedTypes.forEach(typeID => {
+                    if (rep.memberTypeID === typeID && !alreadyIncluded) {
+                        emailPayloadArray.push({
+                            subject: subject.value,
+                            to_name: to_name.value,
+                            from_name: from_name.value,
+                            team_name: team_name.value,
+                            message: message.value,
+                            to_email: rep.email,
+                            to_cc: sendToEMCs ? rep.emEmail : ''
+                        });
+                    }
+                });
+            });
+        } else {
+            console.log('else');
+            selectedMembers.forEach((id) => {
+                const recipient = messengerData.recipients.find(r => r.memberID === id);
+
+                if (recipient) {
                     emailPayloadArray.push({
                         subject: subject.value,
                         to_name: to_name.value,
                         from_name: from_name.value,
                         team_name: team_name.value,
                         message: message.value,
-                        to_email: i.email,
-                        to_cc: sendToEMCs ? i.emEmail : ''
+                        to_email: recipient.email,
+                        to_cc: sendToEMCs ? recipient.emEmail : ''
                     });
-                }
-            });
-
-            recipientValues.forEach(i => {
-                if (i !== '-1' && i !== '-2') {
-                    const recipient = messengerData.recipients.find(r => r.memberTypeID === i);
-                    
-                    if (recipient) {
-                        emailPayloadArray.push({
-                            subject: subject.value,
-                            to_name: to_name.value,
-                            from_name: from_name.value,
-                            team_name: team_name.value,
-                            message: message.value,
-                            to_email: recipient.email,
-                            to_cc: sendToEMCs ? recipient.emEmail : ''
-                        });
-                    }
-                }
-            });
-        } else {
-            recipientValues.forEach(i => {
-                if (i !== '-1' && i !== '-2') {
-                    const recipient = messengerData.recipients.find(r => r.memberID === +i);
-                    
-                    if (recipient) {
-                        emailPayloadArray.push({
-                            subject: subject.value,
-                            to_name: to_name.value,
-                            from_name: from_name.value,
-                            team_name: team_name.value,
-                            message: message.value,
-                            to_email: recipient.email,
-                            to_cc: sendToEMCs ? recipient.emEmail : ''
-                        });
-                    }
                 }
             });
         }
 
-        emailPayloadArray.forEach(p => {
-            emailjs.send('service_j3cty7o', 'template_fgud8hp', p, 'dK3Lze1u3Hmegsnoo')
-            .then((result) => {
-                console.log(result.text);
-            }, (error) => {
-                console.log(error.text);
+        if (emailPayloadArray.length === 0) {
+            window.alert('There are no members in your selected recipient values');
+        } else {            
+            emailPayloadArray.forEach(p => {
+                emailjs.send('service_j3cty7o', 'template_fgud8hp', p, 'dK3Lze1u3Hmegsnoo')
+                .then((result) => {
+                    console.log(result.text);
+                }, (error) => {
+                    console.log(error.text);
+                });
             });
-        });
+        }
+
     };
 
     useEffect(() => {
