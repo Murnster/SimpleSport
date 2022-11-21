@@ -17,6 +17,11 @@ import Input from "./Input";
 
 const Dashboard = () => {
     const [dashboardData, getDashboardData] = useState({events: [], roster: [], eventTypes: [], memberTypes: []});
+    const [quickEventType, setQuickEventType] = useState(0);
+
+    const handleQEType = e => {
+      setQuickEventType(e.value);
+    };
 
     const fetchDashboard = async () => {
       let data = {
@@ -73,12 +78,12 @@ const Dashboard = () => {
       const start = document.getElementById('newEventStart');
       const end = document.getElementById('newEventEnd');
       const desc = document.getElementById('newEventDesc');
-      const location = document.getElementById('newEventlocation');
+      const location = document.getElementById('newEventLocation');
 
       if (title.value === "") {
         title.focus();
         return;
-      } else if (type.value === "-1") {
+      } else if (quickEventType < 0 || !quickEventType) {
         type.focus();
         return;
       } else if (start.value === "" || !start.value) {
@@ -98,7 +103,7 @@ const Dashboard = () => {
       const payload = {
         id: id.value,
         title: title.value,
-        typeID: +type.value,
+        typeID: quickEventType,
         startDate: start.value,
         endDate: end.value,
         desc: desc.value,
@@ -182,38 +187,54 @@ const Dashboard = () => {
 
     const upcomingEvents = (
       <div className="quickEvent">
-        <div className="quickEventHeader">Quickly create a new event for your team!</div>
+        <div className="quickEventHeader"></div>
         <input id="newEventID" type={'hidden'} value="-1"></input>
         <div className="quickEventBody">
           <Input id="newEventTitle" type="shorttext" title="Event Title" helper="Name of your event" />
-          <Input id="newEventType" type="typeSelect" title="Event Type" helper="Select Type of your event" options={dashboardData.eventTypes} />
+          <Input 
+            type="reactSelect"
+            title="Event Type"
+            helper="Select Type of your event"
+            options={dashboardData.eventTypes.map((et) => {
+              return { value: et.typeID, label: et.title };
+            })}
+            changeProp={handleQEType}
+            multiple={false}
+          />
           <Input id="newEventStart" type="date" title="Event Start Time" helper="When does this event start" />
           <Input id="newEventEnd" type="date" title="Event End Time" helper="When does this event end" />
           <Input id="newEventLocation" type="shorttext" title="Event Location" helper="Where is your event" />
           <Input id="newEventDesc" type="longtext" title="Event Description" helper="Describe your event" />
         </div>
         <div className="quickEventFooter">
-          <button onClick={async () => await quickSaveEvent()} className="quickEventSubmit">Create Event</button>
-          <button onClick={() => cancelQuickEvent()} className="quickEventCancel">Cancel</button>
+          <div onClick={async () => await quickSaveEvent()} className="quickEventSubmit ssButton">Create Event</div>
+          <div onClick={() => cancelQuickEvent()} className="quickEventCancel ssButton">Cancel</div>
         </div>
       </div>
     );
 
     const dashRosterHead = (
       <div key={'dashRosterHead'} className="dashRosterRow dashRosterHead">
-        <div>Name</div>
-        <div>Role</div>
-        <div>Phone</div>
+        <div className="dashRosterRowDivider">Name</div>
+        <div className="dashRosterRowDivider">Role</div>
+        <div className="dashRosterRowDivider">Phone</div>
         <div>Phone</div>
       </div>
     );
     
     const dashRoster = dashboardData.roster.map((member) =>
       <div key={'member-' + member.memberID.toString()} className="dashRosterRow">
-        <div>{member.firstName} {member.lastName}</div>
-        <div>{dashboardData.memberTypes.find(t => t.typeID === member.memberTypeID)?.title}</div>
-        <div>{member.phone}</div>
+        <div className="dashRosterRowDivider">{member.firstName} {member.lastName}</div>
+        <div className="dashRosterRowDivider">{dashboardData.memberTypes.find(t => t.typeID === member.memberTypeID)?.title}</div>
+        <div className="dashRosterRowDivider">{member.phone}</div>
         <div>{member.email}</div>
+      </div>
+    );
+
+    const dashRosterTable = (
+      <div key={'dashRosterTable'} className="dashRosterTable">
+        {dashRosterHead}
+        {dashRoster}
       </div>
     );
 
@@ -222,7 +243,7 @@ const Dashboard = () => {
         <Input id="subject" type="shorttext" title="Subject" helper="" />
         <Input id="message" type="longtext" title="Message" helper="" />
         <div className="msgTeamFooter">
-          <button onClick={() => dashboardMessage()} className="msgTeamSend">Send Message to Team</button>
+          <div onClick={() => dashboardMessage()} className="msgTeamSend ssButton">Send Message</div>
         </div>
       </div>
     );
@@ -234,7 +255,7 @@ const Dashboard = () => {
             <SmallContainer headIcon={faCalendarCheck} title={"Quick Event"} content={ upcomingEvents } />
           </div>
           <div className="row">
-            <BigContainer headIcon={faPeopleGroup} title={"Roster"} content={ [dashRosterHead, dashRoster] } />
+            <BigContainer headIcon={faPeopleGroup} title={"Roster"} content={ dashRosterTable } />
             <SmallContainer headIcon={faMessage} title={"Message Team"} content= { messageTeam } />
           </div>
         </div>

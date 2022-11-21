@@ -1,4 +1,5 @@
 import React from "react";
+import Select from "react-select";
 
 import moment from "moment";
 import "../css/Input.css";
@@ -6,7 +7,7 @@ import "../css/Input.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronCircleDown } from '@fortawesome/free-solid-svg-icons'
 
-const Input = ({id, type, title, helper, options = []}) => {
+const Input = ({id, type, title, helper, options = [], changeProp, valueProp, multiple}) => {
     let inputType;
     let inputSize = "small";
 
@@ -25,6 +26,27 @@ const Input = ({id, type, title, helper, options = []}) => {
     };
 
     switch (type) {
+        case 'reactSelect':
+            inputType = (
+                <Select
+                    id={id}
+                    isMulti={multiple}
+                    options={options}
+                    styles={{
+                        control: (baseStyles) => ({
+                        ...baseStyles,
+                        borderColor: 'black',
+                        borderWidth: '2px',
+                        borderRadius: '10px',
+                        width: '107%',
+                        fontFamily: 'system-ui'
+                        }),
+                    }}
+                    onChange={changeProp}
+                    value={valueProp}
+                />
+            );
+            break;
         case 'shorttext':
             inputType = (
                 <textarea id={id} name={id} className="shortTextInput"></textarea>

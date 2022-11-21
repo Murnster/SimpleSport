@@ -3,10 +3,14 @@
     height: initial !important;
 }
 
-.systemButton {
+.system .containerBody {
+    margin-top: 0px;
+}
+
+/* .systemButton {
     margin-top: 10px;
     margin-left: 10px;
-}
+} */
 
 #siteDataPanel, #eventTypesPanel, #memberTypesPanel {
     display: none;
@@ -16,7 +20,6 @@
 .systemTable {
     margin: 10px;
     width: 98%;
-    /* height: 70px; */
     overflow: hidden;
 }
 

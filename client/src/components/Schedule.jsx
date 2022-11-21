@@ -12,12 +12,11 @@ import { get, post } from "../network";
 import FullContainer from "./FullContainer";
 import Popup from "./Popup";
 import Input from "./Input";
-import Tooltip from "./Tooltip";
 
 const Schedule = () => {
   const [scheduleData, getScheduleData] = useState({events: [], eventTypes: []});
   const [openPopup, setOpenPopup] = useState(false);
-  // const [openTooltip, setOpenToolTip] = useState(false);
+  const [selectedType, setSelectedType] = useState();
 
   const fetchSchedule = async () => {
     let scheduleData = {
@@ -41,12 +40,18 @@ const Schedule = () => {
     return await get('eventTypes');
   };
   
+  const newEvent = () => {
+    setSelectedType(0);
+    setOpenPopup(true);
+  };
+
   const editEvent = (event) => {
     setOpenPopup(true);
+    setSelectedType(event.id ? +event.extendedProps.typeID : 0);
+
     setTimeout(() => {
       const id = document.getElementById('newEventID');
       const title = document.getElementById('newEventTitle');
-      const type = document.getElementById('newEventType');
       const start = document.getElementById('newEventStart');
       const end = document.getElementById('newEventEnd');
       const desc = document.getElementById('newEventDesc');
@@ -54,38 +59,12 @@ const Schedule = () => {
       
       id.value = event.id;
       title.value = event.title;
-      type.value = event.extendedProps.typeID;
       start.value = moment(event.start).format('YYYY-MM-DDThh:mm:ss');
       end.value = moment(event.end).format('YYYY-MM-DDThh:mm:ss');
       desc.value = event.extendedProps.desc;
       location.value = event.extendedProps.location;
     }, 50);
   }
-
-  // const showTooltip = (baseElement, content) => {
-  //   setOpenToolTip(true);
-  //   setTimeout(() => {
-  //     const tooltip = document.getElementById('tooltipContent');
-  
-  //     tooltip.innerHTML = content;
-
-  //     console.log(baseElement);
-  //     const position = baseElement.getBoundingClientRect();
-  //     console.log(position);
-
-  //     tooltip.style.x = `${position.x}`;
-  //     tooltip.style.y = `${position.y}`;
-
-  //     tooltip.style.top = `${position.top}`;
-  //     tooltip.style.bottom = `${position.bottom}`;
-  //     tooltip.style.right = `${position.right}`;
-  //     tooltip.style.left = `${position.left}`;
-  //   }, 100);
-  // };
-
-  // const hideTooltip = () => {
-  //   setOpenToolTip(false);
-  // };
 
   const saveEvent = async () => {
     const id = document.getElementById('newEventID');
@@ -99,7 +78,7 @@ const Schedule = () => {
     if (title.value === "") {
       title.focus();
       return;
-    } else if (type.value === "-1") {
+    } else if (selectedType < 0 || !selectedType) {
       type.focus();
       return;
     } else if (start.value === "" || !start.value) {
@@ -119,7 +98,7 @@ const Schedule = () => {
     const payload = {
       id: id.value,
       title: title.value,
-      typeID: +type.value,
+      typeID: selectedType,
       startDate: start.value,
       endDate: end.value,
       desc: desc.value,
@@ -153,6 +132,14 @@ const Schedule = () => {
     }
   };
 
+  const scheduleDataETOptions = scheduleData.eventTypes.map((et) => {
+    return { value: et.typeID, label: et.title };
+  });
+
+  const handleEType = (e) => {
+    setSelectedType(e.value);
+  };
+
   const postEvent = async (event) => {
     const res = await post('postEvent', event);
 
@@ -175,7 +162,15 @@ const Schedule = () => {
         <input id="newEventID" type={'hidden'} value="-1"></input>
         <div className="row">
           <Input id="newEventTitle" type="shorttext" title="Event Title" helper="Name of your event" />
-          <Input id="newEventType" type="typeSelect" title="Event Type" helper="Select Type of your event" options={scheduleData.eventTypes} />
+          <Input 
+            type="reactSelect"
+            title="Event Type"
+            helper="Select Type of your event"
+            options={scheduleDataETOptions}
+            changeProp={handleEType}
+            multiple={false}
+            valueProp={scheduleDataETOptions.find((type) => +type.value === selectedType)}
+          />
         </div>
         <div className="row">
           <Input id="newEventStart" type="date" title="Event Start Time" helper="When does this event start" />
@@ -189,9 +184,9 @@ const Schedule = () => {
         </div>
       </div>
       <div className="createEventFooter">
-        <button onClick={async () => await saveEvent()}>Submit Event</button>
-        <button onClick={() => setOpenPopup(false)}>Cancel Event</button>
-        <button onClick={async () => await deleteEvent(document.getElementById('newEventID').value)}>Delete Event</button>
+        <div className="ssButton" onClick={async () => await saveEvent()}>Submit Event</div>
+        <div className="ssButton" onClick={() => setOpenPopup(false)}>Cancel Event</div>
+        <div className="ssButton" onClick={async () => await deleteEvent(document.getElementById('newEventID').value)}>Delete Event</div>
       </div>
     </div>
   );
@@ -199,7 +194,7 @@ const Schedule = () => {
   const calendar = (
     <div style={{postion: 'relative'}}>
       <div className="scheduleHeader">
-        <button onClick={() => setOpenPopup(true)} className="scheduleButton">Add Event</button>
+        <div onClick={() => newEvent()} className="ssButton">Add Event</div>
       </div>
       <div className="dashCalContainer">
         <FullCalendar 
@@ -212,8 +207,6 @@ const Schedule = () => {
             return { id: ev.id, title: ev.title, start: ev.startDate, end: ev.endDate, typeID: ev.typeID, desc: ev.desc, location: ev.location };
           })}
           eventClick={info => editEvent(info.event)}
-          // eventMouseEnter={info => showTooltip(info.el, info.event.extendedProps.desc)}
-          // eventMouseLeave={() => hideTooltip()}
         />
       </div>
       {  
@@ -221,12 +214,6 @@ const Schedule = () => {
         <Popup title="Create New Event" content={eventPopup} closePopup={() => setOpenPopup(false)} /> :
         null
       }
-      {/* {
-        openTooltip ?
-        <Tooltip />
-        :
-        null
-      } */}
     </div>
   );
 

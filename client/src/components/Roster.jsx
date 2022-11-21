@@ -15,6 +15,7 @@ import Popup from "./Popup";
 const Roster = () => {
     const [rosterData, getRosterData] = useState({roster: [], memberTypes: []});
     const [openPopup, setOpenPopup] = useState(false);
+    const [selectedType, setSelectedType] = useState();
 
     const fetchRosterData = async () => {
         let rosterData = {
@@ -44,15 +45,21 @@ const Roster = () => {
         return title && title !== '' ? title : 'Unknown Role';
     };
 
+    const newMember = () => {
+        setSelectedType(0);
+        setOpenPopup(true);
+    };
+
     const editMember = (member) => {
         setOpenPopup(true);
+        setSelectedType(member?.memberTypeID ? member?.memberTypeID : 0);
+
         setTimeout(() => {
             const id = document.getElementById('newMemberID');
             const fname = document.getElementById('newMemberFName');
             const lname = document.getElementById('newMemberLName');
             const phone = document.getElementById('newMemberPhone');
             const email = document.getElementById('newMemberEmail');
-            const memberType = document.getElementById('newMemberType');
             const emName = document.getElementById('newMemberEmName');
             const emPhone = document.getElementById('newMemberEmPhone');
             const emEmail = document.getElementById('newMemberEmEmail');
@@ -62,7 +69,6 @@ const Roster = () => {
             lname.value = member.lastName;
             phone.value = member.phone;
             email.value = member.email;
-            memberType.value = member.memberTypeID;
             emName.value = member.emContactName;
             emPhone.value = member.emPhone;
             emEmail.value = member.emEmail;
@@ -92,7 +98,7 @@ const Roster = () => {
         } else if (email.value === "") {
             email.focus();
             return;
-        } else if (memberType.value === "-1" || !memberType.value) {
+        } else if (selectedType < 0|| !selectedType) {
             memberType.focus();
             return;
         } else if (emName.value === "") {
@@ -112,7 +118,7 @@ const Roster = () => {
             lname: lname.value,
             phone: phone.value,
             email: email.value,
-            memberTypeID: memberType.value,
+            memberTypeID: selectedType,
             emName: emName.value,
             emPhone: emPhone.value,
             emEmail: emEmail.value
@@ -143,6 +149,14 @@ const Roster = () => {
                 }
             }
         }
+    };
+
+    const rosterDataMTOptions = rosterData.memberTypes.map((m) => {
+        return { value: m.typeID, label: m.title };
+      });
+    
+    const handleMType = (e) => {
+        setSelectedType(e.value);
     };
 
     const postMember = async (member) => {
@@ -184,7 +198,15 @@ const Roster = () => {
                     <Input id="newMemberEmail" type="shortText" title="Email" helper="Please enter email" />
                 </div>
                 <div className="row">
-                <Input id="newMemberType" type="typeSelect" title="Member Type" helper="Please select the type of this member" options={rosterData.memberTypes} />
+                <Input 
+                    type="reactSelect"
+                    title="Member Type"
+                    helper="Please select the type of this member"
+                    options={rosterDataMTOptions}
+                    changeProp={handleMType}
+                    multiple={false}
+                    valueProp={rosterDataMTOptions.find((type) => +type.value === selectedType)}
+                />
                 </div>
                 <div className="row">
                     <Input id="newMemberEmName" type="shortText" title="Emergency Contact" helper="Please enter name of emergency contact" />
@@ -195,9 +217,9 @@ const Roster = () => {
                 </div>
             </div>
             <div className="createMemberFooter">
-                <button onClick={async () => await saveMember()}>Save</button>
-                <button onClick={() => setOpenPopup(false)}>Cancel</button>
-                <button onClick={async () => await deleteMember(document.getElementById('newMemberID').value)}>Delete</button>
+                <div className="ssButton" onClick={async () => await saveMember()}>Save</div>
+                <div className="ssButton" onClick={() => setOpenPopup(false)}>Cancel</div>
+                <div className="ssButton" onClick={async () => await deleteMember(document.getElementById('newMemberID').value)}>Delete</div>
             </div>
         </div>
     );
@@ -205,7 +227,7 @@ const Roster = () => {
     const roster = (
         <div>
             <div className="rosterHeader">
-                <button onClick={() => setOpenPopup(true)} className="rosterButton">Add Team Member</button>
+                <div onClick={() => newMember()} className="ssButton">Add Member</div>
             </div>
             <div className="rosterTable">
                 <div className="rosterTableHeader">

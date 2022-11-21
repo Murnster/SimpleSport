@@ -12,16 +12,28 @@ import Input from "./Input";
 
 const Messenger = () => {
     const [messengerData, getMessengerData] = useState([]);
+    const [selectedMembers, setSelectedMembers] = useState([]);
+    const [selectedTypes, setSelectedTypes] = useState([]);
 
     const fetchMessengerData = async () => {
         let data = {
           recipients: [],
-          memberTypes: []
+          memberTypes: [],
+          recipientOptions: [],
+          messageTypeOptions: []
         };
   
         Promise.all([fetchMessenger(), fetchMemberTypes()]).then((arrays) => {
           data.recipients = arrays[0];
           data.memberTypes = arrays[1];
+
+          data.recipientOptions = arrays[0].map((r) => {
+            return { value: r.memberID, label: `${r.firstName} ${r.lastName}` };
+          });
+
+          data.messageTypeOptions = arrays[1].map((mt) => {
+            return { value: mt.typeID, label: mt.title };
+          });
         }).then(() => {
             getMessengerData(data);
         });
@@ -35,12 +47,36 @@ const Messenger = () => {
         return await get('memberTypes');
     };
 
+    const handleRecipients = (e) => {
+        setSelectedMembers(e);
+    };
+
+    const handleType = (e) => {
+        setSelectedTypes(e);
+    };
+
     const messenger = (
         <div>
             <div className="messengerHeader">
                 <div className="row">
-                    <Input id="recipientSelect" type="multiSelect" title="Members" helper="Select those being emailed" options={messengerData.recipients} />
-                    <Input id="memberTypeSelect" type="typeSelect" title="By Types" helper="Select a contact type you'd like to messenge or leave empty" options={messengerData.memberTypes} />
+                    <Input 
+                        type="reactSelect"
+                        title="Members"
+                        helper="Select those being emailed"
+                        options={messengerData?.recipientOptions}
+                        changeProp={handleRecipients}
+                        multiple={true}
+                        valueProp={messengerData?.recipientOptions?.find((type) => +type.value === selectedTypes)}
+                    />
+                    <Input 
+                        type="reactSelect"
+                        title="By Type"
+                        helper="Select a contact type you'd like to messenge or leave empty"
+                        options={messengerData?.messageTypeOptions}
+                        changeProp={handleType}
+                        multiple={true}
+                        valueProp={messengerData?.messageTypeOptions?.find((type) => +type.value === selectedTypes)}
+                    />
                 </div>
             </div>
             <div className="messengerBody">
@@ -60,7 +96,7 @@ const Messenger = () => {
                 </div>
             </div>
             <div className="messengerFooter">
-                <button onClick={() => sendMessage()}>Send Message</button>
+                <div className="ssButton" onClick={() => sendMessage()}>Send Message</div>
                 <input id="ccEmergency" type="checkbox"></input>Do you want to CC Emergency Contacts?
             </div>
         </div>

@@ -42,7 +42,6 @@ const System = ({updateSiteData}) => {
                 openSitePanel(false);
             } else {
                 panel.style.display = 'block';
-                console.log(systemData);
 
                 document.getElementById('newTeamName').value = systemData.site.teamName;
                 document.getElementById('newHomeScreen').value = systemData.site.homeScreen;
@@ -176,14 +175,14 @@ const System = ({updateSiteData}) => {
                 <Input id="newHomeScreen" type="screenSelect" title="Home screen" helper="Select your preferred home screen" />
             </div>
             <div className="row">
-                <button onClick={() => saveSystem()} className="systemButton">Save Site</button>
+                <div onClick={() => saveSystem()} className="ssButton">Save Site</div>
             </div>
         </div>
     );
     
     const eventTypesJSX = (
         <div id="eventTypesPanel">
-            <button onClick={() => saveEventType()} className="systemButton">Add New Event Type</button>
+            <div onClick={() => saveEventType()} className="ssButton">Add New Event Type</div>
             <div className="row">
                 <Input id="newEventType" type="shorttext" title="Event Type Label" helper="Name of your event type" />
             </div>
@@ -203,7 +202,7 @@ const System = ({updateSiteData}) => {
 
     const memberTypesJSX = (
         <div id="memberTypesPanel">
-            <button onClick={() => saveMemberType()} className="systemButton">Add New Member Type</button>
+            <div onClick={() => saveMemberType()} className="ssButton">Add New Member Type</div>
             <div className="row">
                 <Input id="newMemberType" type="shorttext" title="Member Type Label" helper="Name of your member type" />
             </div>

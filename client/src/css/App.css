@@ -23,12 +23,18 @@ body {
     transition: 0.3s;
 }
 
+.sideNavBarHidden svg {
+    margin-left: 5px;
+}
+
 .sideNavBarHidden h2 {
-    visibility: hidden;
+    visibility: hidden !important;
+    transition: opacity 0.01s, visibility 0.01s;
 }
 
 .sideNavBarHidden .sideNavCompanyName {
-    visibility: hidden;
+    visibility: hidden !important;
+    transition: opacity 0.01s, visibility 0.01s;
 }
 
 .sideNavHeader {
@@ -46,15 +52,23 @@ body {
 
 .sideNavBody {
     justify-content: center;
-    padding: 15px 5px 5px 10px;
+    padding: 15px 10px 5px 5px;
 }
 
 .sideNavItem {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     color: white;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    padding: 5px;
+}
+
+.sideNavItemSelected {
+    border-radius: 15px;
+    color: black;
+    background: lightgray;
+    padding-top: 10px;
 }
 
 .sideNavItem div {
@@ -67,11 +81,19 @@ body {
 .sideNavItem h2 {
     font-size: 20px;
     margin: 0px;
+    opacity: 1;
+    visibility: visible;
+}
+
+.sideNavCompanyName {
+    opacity: 1;
+    visibility: visible;
 }
 
 .sideNavItem svg {
     font-size: x-large;
     margin-right: 10px;
+    margin-left: 5px;
 }
 
 .topNavBar {
@@ -82,7 +104,8 @@ body {
     position: fixed;
     background-color: white;
     z-index: 999999999999999;
-    transition: 0.3s;
+    transition: 0.5s;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .topNavOpen {
@@ -135,35 +158,38 @@ body {
 
 .bigContainer {
     margin: 10px;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     border-radius: 15px;
     width: 70%;
-    height: 600px;
+    /* height: 600px; */
     display: flex;
     flex-direction: column;
     background-color: white;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .smallContainer {
     margin: 10px;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     border-radius: 15px;
     width: 30%;
-    height: 600px;
+    /* height: 600px; */
     display: flex;
     flex-direction: column;
     background-color: white;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .containerHeader {
-    border-left: 1px solid black;
+    /* border-left: 1px solid black;
     border-right: 1px solid black;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid black; */
     border-radius: 15px;
     height: 10%;
     display: flex;
     flex-direction: row;
     align-items: center;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .containerHeader div {
@@ -171,13 +197,10 @@ body {
 }
 
 .containerBody {
+    margin-top: 10px;
     height: 90%;
     display: flex;
     flex-direction: column;
-}
-
-.containerBody .dashRosterRow:first-of-type {
-    border-top: 0;
 }
 
 .dashCalContainer {
@@ -190,15 +213,28 @@ body {
     margin-bottom: 5px !important;
 }
 
+.dashRosterTable {
+    margin: 10px;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    height: 100%;
+    border-radius: 10px;
+}
+
 .dashRosterRow {
     width: 100%;
     height: 50px;
-    border-top: 1px solid black;
     border-bottom: 1px solid black;
     justify-content: space-between;
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+
+.dashRosterHead {
+    border-top: 1px solid black;
+    border-radius: 10px;
 }
 
 .dashRosterHead div {
@@ -210,18 +246,32 @@ body {
 }
 
 .dashRosterRow div {
+    height: 100%;
     width: 25%;
+    align-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashRosterRowDivider {
+    border-right: 1px solid black;
 }
 
 .msgTeamBox {
     display: flex;
     flex-direction: column;
     height: 100% !important;
+    margin: 10px;
 }
 
 .msgTeamBox .inputLarge textarea {
     height: 350px;
-    width: 95%;
+    width: 90%;
+}
+
+.msgTeamBox .inputSmall {
+    width: 90%;
 }
 
 .msgTeamFooter {
@@ -229,7 +279,6 @@ body {
     width: 100%;
     display: flex;
     flex-direction: row;
-    height: 25px;
 }
 
 .quickEvent {
@@ -262,7 +311,7 @@ body {
 }
 
 .quickEventBody .input {
-    width: 95%;
+    width: 92%;
 }
 
 .quickEventBody .inputHelper {
@@ -271,4 +320,15 @@ body {
 
 .mr15 {
     margin-right: 15px;
+}
+
+.ssButton {
+    margin: 10px;
+    display: flex;
+    justify-content: center;
+    width: 125px;
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 10px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }

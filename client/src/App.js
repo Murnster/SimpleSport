@@ -40,7 +40,7 @@ const App = () => {
   return (
     <div className="app">
       <TopNavbar siteName={siteData.teamName} setOpenNav={setTopNav} />
-      <SideNavbar setScreen={setScreen} openNav={!openNav}/>
+      <SideNavbar setScreen={setScreen} screen={screen} openNav={!openNav}/>
       <div className={!openNav ? "mainContainer" : "mainContainer mainContainerHidden"}>
           { screen === 'Dashboard' && <Dashboard /> }
           { screen === 'Schedule' && <Schedule /> }
