@@ -4,6 +4,8 @@ import { faCalendar } from '@fortawesome/free-solid-svg-icons'
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+
 import moment from "moment";
 
 import { useState, useEffect } from "react";
@@ -29,6 +31,7 @@ const Schedule = () => {
       scheduleData.eventTypes = arrays[1];
     }).then(() => {
       getScheduleData(scheduleData);
+      console.log(scheduleData);
     });
   };
 
@@ -40,9 +43,19 @@ const Schedule = () => {
     return await get('eventTypes');
   };
   
-  const newEvent = () => {
+  const newEvent = (date) => {
     setSelectedType(0);
     setOpenPopup(true);
+    
+    setTimeout(() => {
+      if (date) {
+        const start = document.getElementById('newEventStart');
+        const end = document.getElementById('newEventEnd');
+  
+        start.value = moment(date).format('YYYY-MM-DDThh:mm:ss');
+        end.value = moment(date).format('YYYY-MM-DDThh:mm:ss');
+      }
+    },100);
   };
 
   const editEvent = (event) => {
@@ -56,6 +69,8 @@ const Schedule = () => {
       const end = document.getElementById('newEventEnd');
       const desc = document.getElementById('newEventDesc');
       const location = document.getElementById('newEventLocation');
+      const google = document.getElementById('googleEventBtn');
+      const outlook = document.getElementById('outlookEventBtn');
       
       id.value = event.id;
       title.value = event.title;
@@ -63,7 +78,54 @@ const Schedule = () => {
       end.value = moment(event.end).format('YYYY-MM-DDThh:mm:ss');
       desc.value = event.extendedProps.desc;
       location.value = event.extendedProps.location;
+
+      google.style.display = 'block';
+      outlook.style.display = 'block';
+
+      google.onclick = () => serviceLink('google', event.id);
+
+      outlook.onclick = () => serviceLink('outlook', event.id);
     }, 50);
+  }
+
+  const serviceLink = (service, eventID) => {
+    console.log(scheduleData);
+    const event = scheduleData.events.find(ev => +ev.id === +eventID);
+    if (event) {
+      if (service === 'google') {
+        console.log(event.startDate);
+        console.log(event.endDate);
+        const start = moment(event.startDate).format('YYYY-MM-DDTHH:mm:ss');
+        const end = moment(event.endDate).format('YYYY-MM-DDTHH:mm:ss');
+        const test = new Date(event.startDate).toLocaleString()
+        const test2 = new Date(event.endDate).toLocaleString()
+        console.log(test, test2);
+        // console.log(start);
+        // console.log(end);
+        const link = new URLSearchParams({
+          action: "TEMPLATE",
+          text: event.title,
+          details: event.desc,
+          location: event.location,
+          date: test + "%" + test2
+        });
+        console.log(link.toString());
+        window.open(`https://calendar.google.com/calendar/render?${link.toString()}`);
+      } else if (service === 'outlook') {
+        const link = new URLSearchParams({
+          path: "/calendar/action/compose",
+          rru: "addevent",
+          startdt: event.startDate,
+          enddt: event.endDate,
+          subject: event.title,
+          body: event.desc,
+          location: event.location,
+          allday: false,
+        });
+        
+        window.open(`https://outlook.live.com/calendar/0/deeplink/compose?${link.toString()}`);
+      }
+    }
   }
 
   const saveEvent = async () => {
@@ -187,19 +249,19 @@ const Schedule = () => {
         <div className="ssButton" onClick={async () => await saveEvent()}>Submit Event</div>
         <div className="ssButton" onClick={() => setOpenPopup(false)}>Cancel Event</div>
         <div className="ssButton" onClick={async () => await deleteEvent(document.getElementById('newEventID').value)}>Delete Event</div>
+        <div id="googleEventBtn" className="ssButton hideBtn">Add to Google</div>
+        <div id="outlookEventBtn" className="ssButton hideBtn">Add to Outlook</div>
       </div>
     </div>
   );
 
   const calendar = (
     <div style={{postion: 'relative'}}>
-      <div className="scheduleHeader">
-        <div onClick={() => newEvent()} className="ssButton">Add Event</div>
-      </div>
+      <div className="scheduleHeader"></div>
       <div className="dashCalContainer">
         <FullCalendar 
           plugins={ 
-            [ dayGridPlugin ]
+            [ dayGridPlugin, interactionPlugin ]
           }
           initialView="dayGridMonth"
           height={750}
@@ -207,6 +269,23 @@ const Schedule = () => {
             return { id: ev.id, title: ev.title, start: ev.startDate, end: ev.endDate, typeID: ev.typeID, desc: ev.desc, location: ev.location };
           })}
           eventClick={info => editEvent(info.event)}
+          dateClick={(e) => {
+            newEvent(e?.dateStr);
+          }}
+          dayCellClassNames="cursorPointer"
+          customButtons={{
+            newEventButton: {
+              text: 'Add New Event',
+              click: () => {
+                newEvent();
+              },
+            },
+          }}
+          headerToolbar={{
+            left: 'dayGridMonth,dayGridWeek,dayGridDay',
+            center: 'title',
+            right: 'newEventButton prev,next'
+          }}
         />
       </div>
       {  

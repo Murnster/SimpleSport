@@ -182,7 +182,6 @@ const System = ({updateSiteData}) => {
     
     const eventTypesJSX = (
         <div id="eventTypesPanel">
-            <div onClick={() => saveEventType()} className="ssButton">Add New Event Type</div>
             <div className="row">
                 <Input id="newEventType" type="shorttext" title="Event Type Label" helper="Name of your event type" />
             </div>
@@ -197,12 +196,12 @@ const System = ({updateSiteData}) => {
                     </div>
                 </div>
             </div>
+            <div onClick={() => saveEventType()} className="ssButton">New Event Type</div>
         </div>
     );
 
     const memberTypesJSX = (
         <div id="memberTypesPanel">
-            <div onClick={() => saveMemberType()} className="ssButton">Add New Member Type</div>
             <div className="row">
                 <Input id="newMemberType" type="shorttext" title="Member Type Label" helper="Name of your member type" />
             </div>
@@ -217,6 +216,7 @@ const System = ({updateSiteData}) => {
                     </div>
                 </div>
             </div>
+            <div onClick={() => saveMemberType()} className="ssButton">New Member Type</div>
         </div>
     );
     

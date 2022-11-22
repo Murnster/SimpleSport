@@ -42,7 +42,7 @@ const App = () => {
       <TopNavbar siteName={siteData.teamName} setOpenNav={setTopNav} />
       <SideNavbar setScreen={setScreen} screen={screen} openNav={!openNav}/>
       <div className={!openNav ? "mainContainer" : "mainContainer mainContainerHidden"}>
-          { screen === 'Dashboard' && <Dashboard /> }
+          { screen === 'Dashboard' && <Dashboard setScreen={setScreen} teamName={siteData.teamName} /> }
           { screen === 'Schedule' && <Schedule /> }
           { screen === 'Roster' && <Roster /> }
           { screen === 'Messenger' && <Messenger /> }

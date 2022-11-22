@@ -8,7 +8,7 @@ const SmallContainer = ({headIcon, title, content}) => {
         <div className="smallContainer">
             <div className="containerHeader">
                 <div className="containerHeaderIcon">
-                    <FontAwesomeIcon icon={headIcon}/>
+                    <FontAwesomeIcon icon={headIcon} size="xl" />
                 </div>
                 <div className="containerHeaderTitle">
                     <h3>{title}</h3>

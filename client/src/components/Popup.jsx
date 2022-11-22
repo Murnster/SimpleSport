@@ -11,7 +11,7 @@ const Popup = ({title, content, closePopup}) => {
             <div className="popupContainer">
                 <div className="popupHeader">
                     <h3>{title}</h3>
-                    <FontAwesomeIcon icon={faCircleXmark} onClick={() => (closePopup())} />
+                    <FontAwesomeIcon icon={faCircleXmark} size="xl" className="cursorPointer" onClick={() => (closePopup())} />
                 </div>
                 <div className="popupBody">
                     {content}

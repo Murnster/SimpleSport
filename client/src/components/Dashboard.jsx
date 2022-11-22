@@ -3,19 +3,18 @@ import { useState, useEffect } from "react";
 import { get, post } from "../network"
 
 import emailjs from '@emailjs/browser';
+import moment from "moment";
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
-
-import moment from "moment";
 
 import { faCalendar, faCalendarCheck, faPeopleGroup, faMessage } from '@fortawesome/free-solid-svg-icons'
 import BigContainer from "./BigContainer";
 import SmallContainer from "./SmallContainer";
 import Input from "./Input";
 
-const Dashboard = () => {
+const Dashboard = ({setScreen, teamName}) => {
     const [dashboardData, getDashboardData] = useState({events: [], roster: [], eventTypes: [], memberTypes: []});
     const [quickEventType, setQuickEventType] = useState(0);
 
@@ -127,11 +126,15 @@ const Dashboard = () => {
     const dashboardMessage = async () => {
       const subject = document.getElementById('subject');
       const message = document.getElementById('message');
+      const from = document.getElementById('from');
       
       if (subject.value === "") {
         subject.focus();
         return;
-      } else if (message.value === "") {
+      } else if (from.value === "") {
+        from.focus();
+        return;
+      }else if (message.value === "") {
         message.focus();
         return;
       }
@@ -140,8 +143,8 @@ const Dashboard = () => {
         const emailPayload = {
           subject: subject.value,
           to_name: `${i.firstName} ${i.lastName}`,
-          from_name: 'SimpleSport Team',
-          team_name: 'Acadia Rugby',
+          from_name: from.value,
+          team_name: teamName !== '' && teamName ? teamName : 'SimpleSport Team',
           message: message.value,
           to_email: i.email,
           to_cc: ''
@@ -166,7 +169,7 @@ const Dashboard = () => {
     }, []);
 
     const events = dashboardData.events.map(ev => {
-      return { title: ev.title, start: ev.startDate, end: ev.endDate };
+      return { title: ev.title, start: ev.startDate, end: ev.endDate, className: 'cursorPointer' };
     });
     
     const calendar = (
@@ -180,7 +183,7 @@ const Dashboard = () => {
           firstDay={1}
           events={events}
           headerToolbar={{start: "title", center: '', end: 'prev,next'}}
-          eventClick={() => {}}
+          eventClick={() => {setScreen('Schedule')}}
         />
       </div>
     );
@@ -218,12 +221,12 @@ const Dashboard = () => {
         <div className="dashRosterRowDivider">Name</div>
         <div className="dashRosterRowDivider">Role</div>
         <div className="dashRosterRowDivider">Phone</div>
-        <div>Phone</div>
+        <div>Email</div>
       </div>
     );
     
     const dashRoster = dashboardData.roster.map((member) =>
-      <div key={'member-' + member.memberID.toString()} className="dashRosterRow">
+      <div key={'member-' + member.memberID.toString()} onClick={() => setScreen('Roster')} className="dashRosterRow cursorPointer">
         <div className="dashRosterRowDivider">{member.firstName} {member.lastName}</div>
         <div className="dashRosterRowDivider">{dashboardData.memberTypes.find(t => t.typeID === member.memberTypeID)?.title}</div>
         <div className="dashRosterRowDivider">{member.phone}</div>
@@ -240,8 +243,9 @@ const Dashboard = () => {
 
     const messageTeam = (
       <div className="msgTeamBox">
-        <Input id="subject" type="shorttext" title="Subject" helper="" />
-        <Input id="message" type="longtext" title="Message" helper="" />
+        <Input id="subject" type="shorttext" title="Subject" />
+        <Input id="from" type="shorttext" title="From" />
+        <Input id="message" type="longtext" title="Message" />
         <div className="msgTeamFooter">
           <div onClick={() => dashboardMessage()} className="msgTeamSend ssButton">Send Message</div>
         </div>

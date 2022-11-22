@@ -8,7 +8,7 @@ const BigContainer = ({headIcon, title, content, headerClick}) => {
         <div className="bigContainer">
             <div className="containerHeader" onClick={headerClick}>
                 <div className="containerHeaderIcon">
-                    <FontAwesomeIcon icon={headIcon}/>
+                    <FontAwesomeIcon icon={headIcon} size="xl"/>
                 </div>
                 <div className="containerHeaderTitle">
                     <h3>{title}</h3>

@@ -90,20 +90,23 @@ const Messenger = () => {
                 <div className="messengerEmailForm">
                     <input type="hidden" name="to_email" value="rmurney@gmail.com" />
                     <div className="row">
-                        <Input id="team_name" type="shorttext" title="Team Name" helper="" />
-                        <Input id="subject" type="shorttext" title="Subject" helper="" />
+                        <Input id="team_name" type="shorttext" title="Team Name" />
+                        <Input id="subject" type="shorttext" title="Subject" />
                     </div>
                     <div className="row">
-                        <Input id="to_name" type="shorttext" title="To Name" helper="" />
-                        <Input id="from_name" type="shorttext" title="From Name" helper="" />
+                        <Input id="to_name" type="shorttext" title="To Name" />
+                        <Input id="from_name" type="shorttext" title="From Name" />
                     </div>
                     <div className="row">
-                        <Input id="message" type="longtext" title="Message" helper="" />
+                        <Input id="message" type="longtext" title="Message" />
                     </div>
                 </div>
             </div>
             <div className="messengerFooter">
-                <input id="ccEmergency" type="checkbox"></input>Do you want to CC Emergency Contacts?
+                <div id="ccDiv">
+                    <input id="ccEmergency" type="checkbox"></input>
+                    <p>Do you want to CC Emergency Contacts?</p>
+                </div>
                 <div className="ssButton" onClick={() => sendMessage()}>Send Message</div>
             </div>
         </div>

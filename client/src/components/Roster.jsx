@@ -226,9 +226,7 @@ const Roster = () => {
 
     const roster = (
         <div>
-            <div className="rosterHeader">
-                <div onClick={() => newMember()} className="ssButton">Add Member</div>
-            </div>
+            <div className="rosterHeader"></div>
             <div className="rosterTable">
                 <div className="rosterTableHeader">
                     <div className="tableCell"><h3>First Name</h3></div>
@@ -241,6 +239,7 @@ const Roster = () => {
                     {rosterRows}
                 </div>
             </div>
+            <div onClick={() => newMember()} className="ssButton">Add Member</div>
             {  
                 openPopup ?
                 <Popup title="Add New Member" content={rosterPopup} closePopup={() => setOpenPopup(false)} /> :

@@ -7,14 +7,17 @@
     margin-top: 0px;
 }
 
-/* .systemButton {
-    margin-top: 10px;
-    margin-left: 10px;
-} */
+.system .containerHeader {
+    cursor: pointer;
+}
 
 #siteDataPanel, #eventTypesPanel, #memberTypesPanel {
     display: none;
     padding: 10px;
+}
+
+#eventTypesPanel .ssButton, #memberTypesPanel .ssButton {
+    width: 150px;
 }
 
 .systemTable {

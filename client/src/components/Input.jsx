@@ -39,7 +39,8 @@ const Input = ({id, type, title, helper, options = [], changeProp, valueProp, mu
                         borderWidth: '2px',
                         borderRadius: '10px',
                         width: '107%',
-                        fontFamily: 'system-ui'
+                        fontFamily: 'system-ui',
+                        backgroundColor: 'rgba(208, 208, 208, 0.3)'
                         }),
                     }}
                     onChange={changeProp}
