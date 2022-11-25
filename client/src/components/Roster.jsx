@@ -11,12 +11,34 @@ import FullContainer from "./FullContainer";
 import { get, post } from "../network";
 import Input from "./Input";
 import Popup from "./Popup";
+import Toast from "./Toast";
 
 const Roster = () => {
     const [rosterData, getRosterData] = useState({roster: [], memberTypes: []});
     const [openPopup, setOpenPopup] = useState(false);
     const [selectedType, setSelectedType] = useState();
+    const [toastObj, setToastObj] = useState({ good: true, toastText: '', isOpen: false });
 
+    const openDashToast = (good, toastText) => {
+        setToastObj({
+            good,
+            toastText,
+            isOpen: true
+        });
+
+        setTimeout(() => {
+            closeDashToast();
+        }, 5000);
+    };
+  
+    const closeDashToast = () => {
+        setToastObj({
+          good: toastObj.good,
+          text: toastObj.toastText,
+          isOpen: false
+        });
+    };
+    
     const fetchRosterData = async () => {
         let rosterData = {
             roster: [],
@@ -28,6 +50,7 @@ const Roster = () => {
             rosterData.memberTypes = arrays[1];
         }).then(() => {
             getRosterData(rosterData);
+            console.log(rosterData);
         });
     };
     
@@ -86,28 +109,28 @@ const Roster = () => {
         const emPhone = document.getElementById('newMemberEmPhone');
         const emEmail = document.getElementById('newMemberEmEmail');
 
-        if (fname.value === "") {
+        if (fname.value === "" || fname.value.length > 50) {
             fname.focus();
             return;
-        } else if (lname.value === "") {
+        } else if (lname.value === "" || lname.value.length > 50) {
             lname.focus();
             return;
-        } else if (phone.value === "") {
+        } else if (phone.value === "" || phone.value.length > 50) {
             phone.focus();
             return;
-        } else if (email.value === "") {
+        } else if (email.value === "" || email.value.length > 50) {
             email.focus();
             return;
         } else if (selectedType < 0|| !selectedType) {
             memberType.focus();
             return;
-        } else if (emName.value === "") {
+        } else if (emName.value === "" || emName.value.length > 50) {
             emName.focus();
             return;
-        } else if (emPhone.value === "") {
+        } else if (emPhone.value === "" || emPhone.value.length > 50) {
             emPhone.focus();
             return;
-        } else if (emEmail.value === "") {
+        } else if (emEmail.value === "" || emEmail.value.length > 50) {
             emEmail.focus();
             return;
         }
@@ -129,7 +152,9 @@ const Roster = () => {
         if (result.success) {
             fetchRosterData();
             setOpenPopup(false);
+            openDashToast(true, 'Your member was successfully saved!');
         } else {
+            openDashToast(false, 'Your member was failed to save');
             console.error('There was a failure trying to save this member');
         }
     };
@@ -146,6 +171,9 @@ const Roster = () => {
                 if (res.success) {
                     fetchRosterData();
                     setOpenPopup(false);
+                    openDashToast(true, 'Your member was successfully deleted!');
+                } else {
+                    openDashToast(false, 'Your member was not deleted, please refresh and try again');
                 }
             }
         }
@@ -176,11 +204,13 @@ const Roster = () => {
 
     const rosterRows = rosterData.roster.map((member) =>
         <div key={'member-' + member.memberID} onClick={() => editMember(member)} className="rosterTableRow">
-            <div className="tableCell">{member.firstName}</div>
-            <div className="tableCell">{member.lastName}</div>
+            <div className="tableCell">{member.firstName} {member.lastName}</div>
             <div className="tableCell">{getMemberType(member.memberTypeID)}</div>
             <div className="tableCell">{member.phone}</div>
             <div className="tableCell">{member.email}</div>
+            <div className="tableCell rosterHide">{member.emContactName}</div>
+            <div className="tableCell rosterHide">{member.emPhone}</div>
+            <div className="tableCell rosterHide">{member.emEmail}</div>
         </div>
     );
     
@@ -229,11 +259,13 @@ const Roster = () => {
             <div className="rosterHeader"></div>
             <div className="rosterTable">
                 <div className="rosterTableHeader">
-                    <div className="tableCell"><h3>First Name</h3></div>
-                    <div className="tableCell"><h3>Last Name</h3></div>
-                    <div className="tableCell"><h3>Role</h3></div>
-                    <div className="tableCell"><h3>Phone</h3></div>
-                    <div className="tableCell"><h3>Email</h3></div>
+                    <div className="tableCell">Name</div>
+                    <div className="tableCell">Role</div>
+                    <div className="tableCell">Phone</div>
+                    <div className="tableCell">Email</div>
+                    <div className="tableCell rosterHide">Emergency Contact</div>
+                    <div className="tableCell rosterHide">Emergency Phone</div>
+                    <div className="tableCell rosterHide">Emergency Email</div>
                 </div>
                 <div className="rosterTableBody">
                     {rosterRows}
@@ -244,6 +276,11 @@ const Roster = () => {
                 openPopup ?
                 <Popup title="Add New Member" content={rosterPopup} closePopup={() => setOpenPopup(false)} /> :
                 null
+            }
+            {
+                toastObj.isOpen === true
+                ? <Toast good={toastObj.good} toastText={toastObj.toastText} closeToast={closeDashToast} />
+                : null
             }
         </div>
     );

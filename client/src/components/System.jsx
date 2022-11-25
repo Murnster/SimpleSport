@@ -4,12 +4,34 @@ import BigContainer from "./BigContainer";
 import "../css/System.css";
 import Input from "./Input";
 import { get, post } from "../network";
+import Toast from "./Toast";
 
 const System = ({updateSiteData}) => {
     const [systemData, getSysData] = useState({site: {}, eTypes: [], mTypes: []});
     const [sitePanel, openSitePanel] = useState(false);
     const [eventTypesPanel, openEventTypesPanel] = useState(false);
     const [memberTypesPanel, openMemberTypesPanel] = useState(false);
+    const [toastObj, setToastObj] = useState({ good: true, toastText: '', isOpen: false });
+
+    const openDashToast = (good, toastText) => {
+        setToastObj({
+          good,
+          toastText,
+          isOpen: true
+        });
+  
+        setTimeout(() => {
+          closeDashToast();
+        }, 5000);
+    };
+  
+    const closeDashToast = () => {
+        setToastObj({
+          good: toastObj.good,
+          text: toastObj.toastText,
+          isOpen: false
+        });
+    };
 
     const fetchSystem = async () => {
         let data = {
@@ -96,7 +118,9 @@ const System = ({updateSiteData}) => {
 
         if (result.success) {
             await fetchSystem();
+            openDashToast(true, 'Site Data was successfully saved!');
         } else {
+            openDashToast(false, 'There was an issue saving Site Data, please refresh and try again');
             console.error('There was a failure trying to save site');
         }
     };
@@ -104,7 +128,7 @@ const System = ({updateSiteData}) => {
     const saveEventType = async () => {
         const newEventType = document.getElementById('newEventType');
 
-        if (newEventType.value === '') {
+        if (newEventType.value === '' || newEventType.value.length > 50) {
             newEventType.focus();
             return;
         }
@@ -117,8 +141,11 @@ const System = ({updateSiteData}) => {
         const result = await post('postEventType', payload);
 
         if (result.success) {
+            newEventType.value = '';
+            openDashToast(true, 'Your new event type was successfully saved!');
             fetchSystem();
         } else {
+            openDashToast(false, 'There was a failure trying to save this event type');
             console.error('There was a failure trying to save this event type');
         }
     };
@@ -126,7 +153,7 @@ const System = ({updateSiteData}) => {
     const saveMemberType = async () => {
         const newMemberType = document.getElementById('newMemberType');
 
-        if (newMemberType.value === '') {
+        if (newMemberType.value === '' || newMemberType.value.length > 50) {
             newMemberType.focus();
             return;
         }
@@ -139,8 +166,11 @@ const System = ({updateSiteData}) => {
         const result = await post('postMemberType', payload);
 
         if (result.success) {
+            newMemberType.value = '';
+            openDashToast(true, 'Your new member type was successfully saved!');
             fetchSystem();
         } else {
+            openDashToast(false, 'There was a failure trying to save this member type');
             console.error('There was a failure trying to save this member type');
         }
     };
@@ -225,6 +255,11 @@ const System = ({updateSiteData}) => {
             <BigContainer headIcon={faCog} title={"Site Settings"} content={ siteDataJSX } headerClick={() => openClose('Site')} />
             <BigContainer headIcon={faCog} title={"Event Types"} content={ eventTypesJSX } headerClick={() => openClose('Events')} />
             <BigContainer headIcon={faCog} title={"Member Types"} content={ memberTypesJSX } headerClick={() => openClose('Members')} />
+            {
+                toastObj.isOpen === true
+                ? <Toast good={toastObj.good} toastText={toastObj.toastText} closeToast={closeDashToast} />
+                : null
+            }
         </div>
     );
 }

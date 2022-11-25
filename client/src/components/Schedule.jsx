@@ -14,11 +14,51 @@ import { get, post } from "../network";
 import FullContainer from "./FullContainer";
 import Popup from "./Popup";
 import Input from "./Input";
+import Toast from "./Toast";
 
 const Schedule = () => {
   const [scheduleData, getScheduleData] = useState({events: [], eventTypes: []});
   const [openPopup, setOpenPopup] = useState(false);
   const [selectedType, setSelectedType] = useState();
+  const [toastObj, setToastObj] = useState({ good: true, toastText: '', isOpen: false });
+  
+  const colorKey = {
+    1: '#4f91cd',
+    2: '#f53131',
+    3: '#f0ff16',
+    4: '#ff1d58',
+    5: '#edf756',
+    6: '#a0d2eb',
+    7: '#fff685',
+    8: '#f43a09',
+    9: '#657a00',
+    10: '#1400c6',
+    11: '#ff0028',
+    12: '#007f4f',
+    13: '#ff414e',
+    14: '#fea49f',
+    15: '#ffffff'
+  };
+  
+  const openDashToast = (good, toastText) => {
+    setToastObj({
+      good,
+      toastText,
+      isOpen: true
+    });
+
+    setTimeout(() => {
+      closeDashToast();
+    }, 5000);
+  };
+
+  const closeDashToast = () => {
+    setToastObj({
+      good: toastObj.good,
+      text: toastObj.toastText,
+      isOpen: false
+    });
+  };
 
   const fetchSchedule = async () => {
     let scheduleData = {
@@ -31,7 +71,6 @@ const Schedule = () => {
       scheduleData.eventTypes = arrays[1];
     }).then(() => {
       getScheduleData(scheduleData);
-      console.log(scheduleData);
     });
   };
 
@@ -89,27 +128,18 @@ const Schedule = () => {
   }
 
   const serviceLink = (service, eventID) => {
-    console.log(scheduleData);
     const event = scheduleData.events.find(ev => +ev.id === +eventID);
+    
     if (event) {
       if (service === 'google') {
-        console.log(event.startDate);
-        console.log(event.endDate);
-        const start = moment(event.startDate).format('YYYY-MM-DDTHH:mm:ss');
-        const end = moment(event.endDate).format('YYYY-MM-DDTHH:mm:ss');
-        const test = new Date(event.startDate).toLocaleString()
-        const test2 = new Date(event.endDate).toLocaleString()
-        console.log(test, test2);
-        // console.log(start);
-        // console.log(end);
         const link = new URLSearchParams({
           action: "TEMPLATE",
           text: event.title,
           details: event.desc,
           location: event.location,
-          date: test + "%" + test2
+          dates: moment(event.startDate).format('YYYYMMDDTHHmmSSZ') + "/" + moment(event.endDate).format('YYYYMMDDTHHmmSSZ')
         });
-        console.log(link.toString());
+
         window.open(`https://calendar.google.com/calendar/render?${link.toString()}`);
       } else if (service === 'outlook') {
         const link = new URLSearchParams({
@@ -137,7 +167,7 @@ const Schedule = () => {
     const desc = document.getElementById('newEventDesc');
     const location = document.getElementById('newEventLocation');
 
-    if (title.value === "") {
+    if (title.value === "" || title.value.length > 255) {
       title.focus();
       return;
     } else if (selectedType < 0 || !selectedType) {
@@ -152,7 +182,7 @@ const Schedule = () => {
     } else if (desc.value === "" || desc.value.length > 255) {
       desc.focus();
       return;
-    } else if (location.value === "" || location.value.length > 50) {
+    } else if (location.value === "" || location.value.length > 255) {
       location.focus();
       return;
     }
@@ -172,7 +202,9 @@ const Schedule = () => {
     if (result.success) {
       fetchSchedule();
       setOpenPopup(false);
+      openDashToast(true, 'Your event was successfully saved!');
     } else {
+      openDashToast(false, 'There was a failure trying to save this event');
       console.error('There was a failure trying to save this event');
     }
   };
@@ -189,6 +221,9 @@ const Schedule = () => {
         if (res.success) {
           fetchSchedule();
           setOpenPopup(false);
+          openDashToast(true, 'Your event was successfully deleted!');
+        } else {
+          openDashToast(true, 'Your event was not deleted, please refresh and try again');
         }
       }
     }
@@ -265,8 +300,9 @@ const Schedule = () => {
           }
           initialView="dayGridMonth"
           height={750}
+          eventDisplay="block"
           events={scheduleData?.events.map(ev => {
-            return { id: ev.id, title: ev.title, start: ev.startDate, end: ev.endDate, typeID: ev.typeID, desc: ev.desc, location: ev.location };
+            return { id: ev.id, title: ev.title, start: ev.startDate, end: ev.endDate, typeID: ev.typeID, desc: ev.desc, location: ev.location, backgroundColor: colorKey[ev.typeID], textColor: 'black' };
           })}
           eventClick={info => editEvent(info.event)}
           dateClick={(e) => {
@@ -292,6 +328,11 @@ const Schedule = () => {
         openPopup ?
         <Popup title="Create New Event" content={eventPopup} closePopup={() => setOpenPopup(false)} /> :
         null
+      }
+      {
+        toastObj.isOpen === true
+        ? <Toast good={toastObj.good} toastText={toastObj.toastText} closeToast={closeDashToast} />
+        : null
       }
     </div>
   );

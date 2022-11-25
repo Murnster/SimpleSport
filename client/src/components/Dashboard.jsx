@@ -13,10 +13,50 @@ import { faCalendar, faCalendarCheck, faPeopleGroup, faMessage } from '@fortawes
 import BigContainer from "./BigContainer";
 import SmallContainer from "./SmallContainer";
 import Input from "./Input";
+import Toast from "./Toast";
 
 const Dashboard = ({setScreen, teamName}) => {
     const [dashboardData, getDashboardData] = useState({events: [], roster: [], eventTypes: [], memberTypes: []});
     const [quickEventType, setQuickEventType] = useState(0);
+    const [toastObj, setToastObj] = useState({ good: true, toastText: '', isOpen: false });
+
+    const colorKey = {
+      1: '#4f91cd',
+      2: '#f53131',
+      3: '#f0ff16',
+      4: '#ff1d58',
+      5: '#edf756',
+      6: '#a0d2eb',
+      7: '#fff685',
+      8: '#f43a09',
+      9: '#657a00',
+      10: '#1400c6',
+      11: '#ff0028',
+      12: '#007f4f',
+      13: '#ff414e',
+      14: '#fea49f',
+      15: '#ffffff'
+    };
+
+    const openDashToast = (good, toastText) => {
+      setToastObj({
+        good,
+        toastText,
+        isOpen: true
+      });
+
+      setTimeout(() => {
+        closeDashToast();
+      }, 5000);
+    };
+
+    const closeDashToast = () => {
+      setToastObj({
+        good: toastObj.good,
+        text: toastObj.toastText,
+        isOpen: false
+      });
+    };
 
     const handleQEType = e => {
       setQuickEventType(e.value);
@@ -79,7 +119,7 @@ const Dashboard = ({setScreen, teamName}) => {
       const desc = document.getElementById('newEventDesc');
       const location = document.getElementById('newEventLocation');
 
-      if (title.value === "") {
+      if (title.value === "" || title.value.length > 255) {
         title.focus();
         return;
       } else if (quickEventType < 0 || !quickEventType) {
@@ -94,7 +134,7 @@ const Dashboard = ({setScreen, teamName}) => {
       } else if (desc.value === "" || desc.value.length > 255) {
         desc.focus();
         return;
-      } else if (location.value === "" || location.value.length > 50) {
+      } else if (location.value === "" || location.value.length > 255) {
         location.focus();
         return;
       }
@@ -110,8 +150,17 @@ const Dashboard = ({setScreen, teamName}) => {
       };
       
       const result = await postEvent(payload);
-  
+
       if (result.success) {
+        openDashToast(true, 'Your new event was successfully saved!');
+
+        id.value = '';
+        title.value = '';
+        start.value = '';
+        end.value = '';
+        desc.value = '';
+        location.value = '';
+
         await fetchEvents().then((eventsPayload) => getDashboardData({
           events: eventsPayload,
           roster: dashboardData.roster,
@@ -119,6 +168,7 @@ const Dashboard = ({setScreen, teamName}) => {
           memberTypes: dashboardData.memberTypes
         }));
       } else {
+        openDashToast(false, 'There was a failure trying to save this event');
         console.error('There was a failure trying to save this event');
       }
     };
@@ -152,8 +202,10 @@ const Dashboard = ({setScreen, teamName}) => {
 
         emailjs.send('service_j3cty7o', 'template_fgud8hp', emailPayload, 'dK3Lze1u3Hmegsnoo')
         .then((result) => {
+            openDashToast(true, 'Your message was succesfully sent to your team!');
             console.log(result.text);
         }, (error) => {
+            openDashToast(false, 'Your message failed to send to your team');
             console.log(error.text);
         });
       });
@@ -169,7 +221,7 @@ const Dashboard = ({setScreen, teamName}) => {
     }, []);
 
     const events = dashboardData.events.map(ev => {
-      return { title: ev.title, start: ev.startDate, end: ev.endDate, className: 'cursorPointer' };
+      return { title: ev.title, start: ev.startDate, end: ev.endDate, className: 'cursorPointer', backgroundColor: colorKey[ev.typeID], textColor: 'black' };
     });
     
     const calendar = (
@@ -181,6 +233,7 @@ const Dashboard = ({setScreen, teamName}) => {
           initialView="listWeek"
           height={475}
           firstDay={1}
+          eventDisplay="block"
           events={events}
           headerToolbar={{start: "title", center: '', end: 'prev,next'}}
           eventClick={() => {setScreen('Schedule')}}
@@ -218,18 +271,18 @@ const Dashboard = ({setScreen, teamName}) => {
 
     const dashRosterHead = (
       <div key={'dashRosterHead'} className="dashRosterRow dashRosterHead">
-        <div className="dashRosterRowDivider">Name</div>
-        <div className="dashRosterRowDivider">Role</div>
-        <div className="dashRosterRowDivider">Phone</div>
+        <div>Name</div>
+        <div>Role</div>
+        <div>Phone</div>
         <div>Email</div>
       </div>
     );
     
     const dashRoster = dashboardData.roster.map((member) =>
       <div key={'member-' + member.memberID.toString()} onClick={() => setScreen('Roster')} className="dashRosterRow cursorPointer">
-        <div className="dashRosterRowDivider">{member.firstName} {member.lastName}</div>
-        <div className="dashRosterRowDivider">{dashboardData.memberTypes.find(t => t.typeID === member.memberTypeID)?.title}</div>
-        <div className="dashRosterRowDivider">{member.phone}</div>
+        <div>{member.firstName} {member.lastName}</div>
+        <div>{dashboardData.memberTypes.find(t => t.typeID === member.memberTypeID)?.title}</div>
+        <div>{member.phone}</div>
         <div>{member.email}</div>
       </div>
     );
@@ -262,6 +315,11 @@ const Dashboard = ({setScreen, teamName}) => {
             <BigContainer headIcon={faPeopleGroup} title={"Roster"} content={ dashRosterTable } />
             <SmallContainer headIcon={faMessage} title={"Message Team"} content= { messageTeam } />
           </div>
+          {
+            toastObj.isOpen === true
+            ? <Toast good={toastObj.good} toastText={toastObj.toastText} closeToast={closeDashToast} />
+            : null
+          }
         </div>
     );
 }

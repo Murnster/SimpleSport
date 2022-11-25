@@ -9,11 +9,33 @@ import { faMessage } from '@fortawesome/free-solid-svg-icons'
 import { get } from "../network";
 import FullContainer from "./FullContainer";
 import Input from "./Input";
+import Toast from "./Toast";
 
 const Messenger = () => {
     const [messengerData, getMessengerData] = useState([]);
     const [selectedMembers, setSelectedMembers] = useState([]);
     const [selectedTypes, setSelectedTypes] = useState([]);
+    const [toastObj, setToastObj] = useState({ good: true, toastText: '', isOpen: false });
+
+    const openDashToast = (good, toastText) => {
+        setToastObj({
+            good,
+            toastText,
+            isOpen: true
+        });
+
+        setTimeout(() => {
+            closeDashToast();
+        }, 5000);
+    };
+  
+    const closeDashToast = () => {
+        setToastObj({
+          good: toastObj.good,
+          text: toastObj.toastText,
+          isOpen: false
+        });
+    };
 
     const fetchMessengerData = async () => {
         let data = {
@@ -109,6 +131,11 @@ const Messenger = () => {
                 </div>
                 <div className="ssButton" onClick={() => sendMessage()}>Send Message</div>
             </div>
+            {
+                toastObj.isOpen === true
+                ? <Toast good={toastObj.good} toastText={toastObj.toastText} closeToast={closeDashToast} />
+                : null
+            }
         </div>
     )
     
@@ -222,8 +249,10 @@ const Messenger = () => {
             emailPayloadArray.forEach(p => {
                 emailjs.send('service_j3cty7o', 'template_fgud8hp', p, 'dK3Lze1u3Hmegsnoo')
                 .then((result) => {
+                    openDashToast(true, 'Your message was successfully sent!')
                     console.log(result.text);
                 }, (error) => {
+                    openDashToast(false, 'Your message was not sent, please refresh and try again')
                     console.log(error.text);
                 });
             });

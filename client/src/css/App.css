@@ -207,17 +207,13 @@ body {
 
 .dashRosterTable {
     margin: 10px;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
-    border-bottom: 1px solid black;
     height: 100%;
-    border-radius: 10px;
 }
 
 .dashRosterRow {
     width: 100%;
     height: 35px;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #DCDCDC;
     justify-content: space-between;
     display: flex;
     flex-direction: row;
@@ -225,8 +221,8 @@ body {
 }
 
 .dashRosterHead {
-    border-top: 1px solid black;
-    border-radius: 10px;
+    border-bottom: 1px solid #DCDCDC;
+    background-color: #E8E8E8;
 }
 
 .dashRosterHead div {
@@ -243,11 +239,8 @@ body {
     align-items: center;
     display: flex;
     align-items: center;
-    justify-content: center;
-}
-
-.dashRosterRowDivider {
-    border-right: 1px solid black;
+    justify-content: left;
+    margin-left: 10px;
 }
 
 .msgTeamBox {
@@ -330,6 +323,10 @@ body {
     cursor: pointer;
 }
 
+.ssButton:hover {
+    background-color: darkgray;
+}
+
 .ssButton svg {
     padding: 1px 10px 0px 0px;
 }
@@ -342,4 +339,53 @@ body {
 
 .cursorPointer {
     cursor: pointer;
+}
+
+.ssToast {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    width: 300px;
+    height: 70px;
+    z-index: 999999999999;
+    background-color: #E8E8E8;
+    display: flex;
+    flex-direction: row;
+    animation-duration: 1s;
+    animation-name: slidein;
+}
+
+@keyframes slidein {
+    from {
+        right: -300px;
+    }
+
+    to {
+        right: 25px;
+    }
+}
+
+.ssToast div:first-of-type {
+    height: 100%;
+    width: 2%;
+    height: 60px;
+    margin-top: 5px
+}
+
+.ssToast .green {
+    background-color: lightgreen;
+}
+
+.ssToast .red {
+    background-color: red;
+}
+
+.toastName {
+    width: 93%;
+    padding: 10px;
+    text-align: left;
+}
+
+.toastExit {
+    padding: 5px;
 }

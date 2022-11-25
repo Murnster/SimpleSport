@@ -1,5 +1,4 @@
 .roster {
-    /* border: 1px solid black; */
     border-radius: 15px;
     width: 100%;
     height: 100%;
@@ -18,45 +17,38 @@
     width: 98%;
     height: 600px;
     overflow: hidden;
-    border: 1px solid black;
     border-radius: 10px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .rosterTableHeader {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    /* margin-top: 10px; */
+    border-bottom: 1px solid #DCDCDC;
+    background-color: #E8E8E8;
 }
 
 .rosterTableHeader .tableCell {
-    border-top: 0px;
-}
-
-.rosterTableHeader .tableCell:first-of-type {
-    border-left: 0px;
-}
-
-.rosterTableHeader .tableCell:last-of-type {
-    border-right: 0px;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 .rosterTableRow {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    border-bottom: 1px solid #DCDCDC;
+    cursor: pointer;
 }
 
 .tableCell {
     width: 100%;
     height: 35px;
-    border: 1px solid black;
-    text-align: center;
+    text-align: left;
     line-height: 35px;
-}
-
-.tableCell h3 {
-    margin: 0px;
+    font-size: 14px;
+    margin-left: 10px;
 }
 
 .createMemberFooter {
@@ -68,4 +60,10 @@
 
 .createMemberFooter button {
     margin-right: 10px;
+}
+
+@media screen and (max-width: 1200px) {
+    .rosterHide {
+        display: none;
+    }
 }
