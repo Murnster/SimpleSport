@@ -15,6 +15,7 @@ import Toast from "./Toast";
 
 const Roster = () => {
     const [rosterData, getRosterData] = useState({roster: [], memberTypes: []});
+    const [filteredRoster, getFiltered] = useState(null);
     const [openPopup, setOpenPopup] = useState(false);
     const [selectedType, setSelectedType] = useState();
     const [toastObj, setToastObj] = useState({ good: true, toastText: '', isOpen: false });
@@ -179,12 +180,23 @@ const Roster = () => {
         }
     };
 
-    const rosterDataMTOptions = rosterData.memberTypes.map((m) => {
+    const rosterDataMTOptions = [{value: 0, label: 'All types'}].concat(rosterData.memberTypes.map((m) => {
         return { value: m.typeID, label: m.title };
-      });
+    }));
     
     const handleMType = (e) => {
         setSelectedType(e.value);
+    };
+
+    const handleTableFilter = (e) => {
+        const val = +e.value;
+
+        if (val === 0) {
+            getFiltered(null);
+        } else {
+            const filteredArray = rosterData.roster.filter(r => +r.memberTypeID === val);
+            getFiltered(filteredArray);
+        }
     };
 
     const postMember = async (member) => {
@@ -202,7 +214,7 @@ const Roster = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const rosterRows = rosterData.roster.map((member) =>
+    const rosterRows = (filteredRoster ? filteredRoster : rosterData.roster).map((member) =>
         <div key={'member-' + member.memberID} onClick={() => editMember(member)} className="rosterTableRow">
             <div className="tableCell">{member.firstName} {member.lastName}</div>
             <div className="tableCell">{getMemberType(member.memberTypeID)}</div>
@@ -256,7 +268,18 @@ const Roster = () => {
 
     const roster = (
         <div>
-            <div className="rosterHeader"></div>
+            <div className="rosterHeader">
+                <div onClick={() => newMember()} className="ssButton">Add Member</div>
+                <Input 
+                    type="reactSelect"
+                    title=""
+                    helper=""
+                    options={rosterDataMTOptions}
+                    changeProp={handleTableFilter}
+                    multiple={false}
+                    valueProp={rosterDataMTOptions.find((type) => +type.value === selectedType)}
+                />
+            </div>
             <div className="rosterTable">
                 <div className="rosterTableHeader">
                     <div className="tableCell">Name</div>
@@ -271,7 +294,6 @@ const Roster = () => {
                     {rosterRows}
                 </div>
             </div>
-            <div onClick={() => newMember()} className="ssButton">Add Member</div>
             {  
                 openPopup ?
                 <Popup title="Add New Member" content={rosterPopup} closePopup={() => setOpenPopup(false)} /> :

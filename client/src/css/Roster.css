@@ -9,7 +9,18 @@
 }
 
 .rosterHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     margin: 10px;
+}
+
+.rosterHeader .ssButton {
+    height: 20px;
+}
+
+.rosterHeader .inputSmall {
+    margin-right: 40px;
 }
 
 .rosterTable {
