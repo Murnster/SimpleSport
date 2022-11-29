@@ -51,6 +51,7 @@ body {
 }
 
 .sideNavBody {
+    overflow: hidden;
     justify-content: center;
     padding: 15px 10px 5px 5px;
 }
@@ -104,7 +105,7 @@ body {
     position: fixed;
     background-color: white;
     z-index: 999999999999999;
-    transition: 0.5s;
+    transition: 0.3s;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 

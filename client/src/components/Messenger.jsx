@@ -11,7 +11,7 @@ import FullContainer from "./FullContainer";
 import Input from "./Input";
 import Toast from "./Toast";
 
-const Messenger = () => {
+const Messenger = ({teamName}) => {
     const [messengerData, getMessengerData] = useState([]);
     const [selectedMembers, setSelectedMembers] = useState([]);
     const [selectedTypes, setSelectedTypes] = useState([]);
@@ -112,11 +112,11 @@ const Messenger = () => {
                 <div className="messengerEmailForm">
                     <input type="hidden" name="to_email" value="rmurney@gmail.com" />
                     <div className="row">
-                        <Input id="team_name" type="shorttext" title="Team Name" />
+                        {/* <Input id="team_name" type="shorttext" title="Team Name" /> */}
                         <Input id="subject" type="shorttext" title="Subject" />
+                        <Input id="to_name" type="shorttext" title="To Name" />
                     </div>
                     <div className="row">
-                        <Input id="to_name" type="shorttext" title="To Name" />
                         <Input id="from_name" type="shorttext" title="From Name" />
                     </div>
                     <div className="row">
@@ -143,7 +143,7 @@ const Messenger = () => {
         let sendToEMCs = false;
 
         const recipientSelect = document.getElementById('recipientSelect');
-        const team_name = document.getElementById('team_name');
+        // const team_name = document.getElementById('team_name');
         const subject = document.getElementById('subject');
         const to_name = document.getElementById('to_name');
         const from_name = document.getElementById('from_name');
@@ -153,10 +153,12 @@ const Messenger = () => {
         if (selectedMembers.length === 0) {
             recipientSelect.focus();
             return;
-        } else if (team_name.value === "") {
-            team_name.focus();
-            return;
-        } else if (to_name.value === "") {
+        } 
+        // else if (team_name.value === "") {
+        //     team_name.focus();
+        //     return;
+        // } 
+        else if (to_name.value === "") {
             to_name.focus();
             return;
         } else if (from_name.value === "") {
@@ -177,20 +179,18 @@ const Messenger = () => {
         let emailPayloadArray = [];
 
         if (selectedMembers.indexOf(-2) !== -1) {
-            console.log('if');
             messengerData.recipients.forEach(i => {
                 emailPayloadArray.push({
                     subject: subject.value,
                     to_name: to_name.value,
                     from_name: from_name.value,
-                    team_name: team_name.value,
+                    team_name: teamName,
                     message: message.value,
                     to_email: i.email,
                     to_cc: sendToEMCs ? i.emEmail : ''
                 });
             });
         } else if (selectedMembers.indexOf(-1) !== -1) {
-            console.log('else if');
             messengerData.recipients.forEach(rep => {
                 let alreadyIncluded = false;
 
@@ -202,7 +202,7 @@ const Messenger = () => {
                             subject: subject.value,
                             to_name: to_name.value,
                             from_name: from_name.value,
-                            team_name: team_name.value,
+                            team_name: teamName,
                             message: message.value,
                             to_email: rep.email,
                             to_cc: sendToEMCs ? rep.emEmail : ''
@@ -216,7 +216,7 @@ const Messenger = () => {
                             subject: subject.value,
                             to_name: to_name.value,
                             from_name: from_name.value,
-                            team_name: team_name.value,
+                            team_name: teamName,
                             message: message.value,
                             to_email: rep.email,
                             to_cc: sendToEMCs ? rep.emEmail : ''
@@ -225,7 +225,6 @@ const Messenger = () => {
                 });
             });
         } else {
-            console.log('else');
             selectedMembers.forEach((id) => {
                 const recipient = messengerData.recipients.find(r => r.memberID === id);
 
@@ -234,7 +233,7 @@ const Messenger = () => {
                         subject: subject.value,
                         to_name: to_name.value,
                         from_name: from_name.value,
-                        team_name: team_name.value,
+                        team_name: teamName,
                         message: message.value,
                         to_email: recipient.email,
                         to_cc: sendToEMCs ? recipient.emEmail : ''

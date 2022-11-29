@@ -281,7 +281,7 @@ const Schedule = () => {
         </div>
       </div>
       <div className="createEventFooter">
-        <div className="ssButton" onClick={async () => await saveEvent()}>Submit Event</div>
+        <div className="ssButton" onClick={async () => await saveEvent()}>Save Event</div>
         <div className="ssButton" onClick={() => setOpenPopup(false)}>Cancel Event</div>
         <div className="ssButton" onClick={async () => await deleteEvent(document.getElementById('newEventID').value)}>Delete Event</div>
         <div id="googleEventBtn" className="ssButton hideBtn">Add to Google</div>

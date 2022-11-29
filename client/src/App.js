@@ -45,7 +45,7 @@ const App = () => {
           { screen === 'Dashboard' && <Dashboard setScreen={setScreen} teamName={siteData.teamName} /> }
           { screen === 'Schedule' && <Schedule /> }
           { screen === 'Roster' && <Roster /> }
-          { screen === 'Messenger' && <Messenger /> }
+          { screen === 'Messenger' && <Messenger teamName={siteData.teamName} /> }
           { screen === 'System' && <System updateSiteData={setSiteData} /> }
       </div>
     </div>

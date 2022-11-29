@@ -51,7 +51,6 @@ const Roster = () => {
             rosterData.memberTypes = arrays[1];
         }).then(() => {
             getRosterData(rosterData);
-            console.log(rosterData);
         });
     };
     
