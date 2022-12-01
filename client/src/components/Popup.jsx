@@ -1,11 +1,11 @@
-import React from "react";
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons'
-
+import React from "react";
 import "../css/Popup.css";
 
+// Popup componenet
 const Popup = ({title, content, closePopup}) => {
+    // Popup html
     return (
         <div className="popupWrapper">
             <div className="popupContainer">

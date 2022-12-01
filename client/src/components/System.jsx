@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from "react";
+import { get, post } from "../network";
 import { faCog } from '@fortawesome/free-solid-svg-icons'
 import BigContainer from "./BigContainer";
-import "../css/System.css";
 import Input from "./Input";
-import { get, post } from "../network";
 import Toast from "./Toast";
+import "../css/System.css";
 
+// System component
 const System = ({updateSiteData}) => {
+    // States
     const [systemData, getSysData] = useState({site: {}, eTypes: [], mTypes: []});
     const [sitePanel, openSitePanel] = useState(false);
     const [eventTypesPanel, openEventTypesPanel] = useState(false);
     const [memberTypesPanel, openMemberTypesPanel] = useState(false);
     const [toastObj, setToastObj] = useState({ good: true, toastText: '', isOpen: false });
 
-    const openDashToast = (good, toastText) => {
+    // Open System Toast
+    const openSystemToast = (good, toastText) => {
         setToastObj({
           good,
           toastText,
@@ -21,11 +24,12 @@ const System = ({updateSiteData}) => {
         });
   
         setTimeout(() => {
-          closeDashToast();
+          closeSystemToast();
         }, 5000);
     };
-  
-    const closeDashToast = () => {
+    
+    // Close System Toast
+    const closeSystemToast = () => {
         setToastObj({
           good: toastObj.good,
           text: toastObj.toastText,
@@ -33,6 +37,7 @@ const System = ({updateSiteData}) => {
         });
     };
 
+    // Network calls to get system data
     const fetchSystem = async () => {
         let data = {
             site: {},
@@ -54,6 +59,7 @@ const System = ({updateSiteData}) => {
         });
     };
 
+    // Open / Close function for settings tabs
     const openClose = (panel) => {
         if (panel === 'Site') {
             const panel = document.getElementById('siteDataPanel');
@@ -97,6 +103,7 @@ const System = ({updateSiteData}) => {
         }
     };
 
+    // Save system data function
     const saveSystem = async () => {
         const teamName = document.getElementById('newTeamName');
         const homeScreen = document.getElementById('newHomeScreen');
@@ -118,13 +125,14 @@ const System = ({updateSiteData}) => {
 
         if (result.success) {
             await fetchSystem();
-            openDashToast(true, 'Site Data was successfully saved!');
+            openSystemToast(true, 'Site Data was successfully saved!');
         } else {
-            openDashToast(false, 'There was an issue saving Site Data, please refresh and try again');
+            openSystemToast(false, 'There was an issue saving Site Data, please refresh and try again');
             console.error('There was a failure trying to save site');
         }
     };
 
+    // Save Event Types function
     const saveEventType = async () => {
         const newEventType = document.getElementById('newEventType');
 
@@ -142,14 +150,15 @@ const System = ({updateSiteData}) => {
 
         if (result.success) {
             newEventType.value = '';
-            openDashToast(true, 'Your new event type was successfully saved!');
+            openSystemToast(true, 'Your new event type was successfully saved!');
             fetchSystem();
         } else {
-            openDashToast(false, 'There was a failure trying to save this event type');
+            openSystemToast(false, 'There was a failure trying to save this event type');
             console.error('There was a failure trying to save this event type');
         }
     };
 
+    // Save member types function
     const saveMemberType = async () => {
         const newMemberType = document.getElementById('newMemberType');
 
@@ -167,14 +176,15 @@ const System = ({updateSiteData}) => {
 
         if (result.success) {
             newMemberType.value = '';
-            openDashToast(true, 'Your new member type was successfully saved!');
+            openSystemToast(true, 'Your new member type was successfully saved!');
             fetchSystem();
         } else {
-            openDashToast(false, 'There was a failure trying to save this member type');
+            openSystemToast(false, 'There was a failure trying to save this member type');
             console.error('There was a failure trying to save this member type');
         }
     };
 
+    // Hook
     useEffect(() => {
         const settingsEffect = async () => {
           await fetchSystem();
@@ -184,6 +194,7 @@ const System = ({updateSiteData}) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Event type rows
     const eTypesRows = systemData.eTypes.map((eTypes) =>
         <div key={'eType-' + eTypes.typeID} className="systemTableRow">
             <div className="tableCell">{eTypes.typeID}</div>
@@ -191,6 +202,7 @@ const System = ({updateSiteData}) => {
         </div>
     );
 
+    // Member types rows
     const mTypesRows = systemData.mTypes.map((mTypes) =>
         <div key={'mType-' + mTypes.typeID} className="systemTableRow">
             <div className="tableCell">{mTypes.typeID}</div>
@@ -198,6 +210,7 @@ const System = ({updateSiteData}) => {
         </div>
     );
 
+    // Site data html
     const siteDataJSX = (
         <div id="siteDataPanel">
             <div className="row">
@@ -210,6 +223,7 @@ const System = ({updateSiteData}) => {
         </div>
     );
     
+    // Event types html
     const eventTypesJSX = (
         <div id="eventTypesPanel">
             <div className="row">
@@ -230,6 +244,7 @@ const System = ({updateSiteData}) => {
         </div>
     );
 
+    // Member tyoes html
     const memberTypesJSX = (
         <div id="memberTypesPanel">
             <div className="row">
@@ -250,6 +265,7 @@ const System = ({updateSiteData}) => {
         </div>
     );
     
+    // return system html
     return (
         <div className="system">
             <BigContainer headIcon={faCog} title={"Site Settings"} content={ siteDataJSX } headerClick={() => openClose('Site')} />
@@ -257,7 +273,7 @@ const System = ({updateSiteData}) => {
             <BigContainer headIcon={faCog} title={"Member Types"} content={ memberTypesJSX } headerClick={() => openClose('Members')} />
             {
                 toastObj.isOpen === true
-                ? <Toast good={toastObj.good} toastText={toastObj.toastText} closeToast={closeDashToast} />
+                ? <Toast good={toastObj.good} toastText={toastObj.toastText} closeToast={closeSystemToast} />
                 : null
             }
         </div>

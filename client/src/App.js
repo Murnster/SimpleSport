@@ -1,22 +1,23 @@
-import { useEffect, useState } from "react";
 import { get } from "./network";
-
+import { useEffect, useState } from "react";
+import Dashboard from "./components/Dashboard";
+import Messenger from "./components/Messenger";
+import Roster from "./components/Roster";
+import Schedule from "./components/Schedule";
+import SideNavbar from "./components/SideNavbar";
+import System from "./components/System";
+import TopNavbar from "./components/TopNavbar";
 import './css/App.css';
 import './css/Schedule.css';
 
-import Dashboard from "./components/Dashboard";
-import SideNavbar from "./components/SideNavbar";
-import Schedule from "./components/Schedule";
-import TopNavbar from "./components/TopNavbar";
-import Roster from "./components/Roster";
-import Messenger from "./components/Messenger";
-import System from "./components/System";
-
+// Main App Component
 const App = () => {
+  // States
   const [siteData, setSiteData] = useState({});
   const [screen, setScreen] = useState('');
   const [openNav, setOpenNav] = useState(true);
 
+  // Network calls to get site data
   const fetchSite = async () => {
     Promise.all([get('siteData')]).then((arrays) => {
       setSiteData(arrays[0][0]);
@@ -24,6 +25,7 @@ const App = () => {
     });
   };
 
+  // Hook 
   useEffect(() => {
     const getSiteData = async () => {
       await fetchSite();
@@ -33,10 +35,12 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Navbar open and close
   const setTopNav = () => {
     setOpenNav(openNav => !openNav);
   };
 
+  // App html
   return (
     <div className="app">
       <TopNavbar siteName={siteData.teamName} setOpenNav={setTopNav} />

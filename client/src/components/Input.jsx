@@ -1,21 +1,23 @@
-import React from "react";
-import Select from "react-select";
-
-import moment from "moment";
-import "../css/Input.css";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronCircleDown } from '@fortawesome/free-solid-svg-icons'
+import moment from "moment";
+import React from "react";
+import Select from "react-select";
+import "../css/Input.css";
 
+// Input component
 const Input = ({id, type, title, helper, options = [], changeProp, valueProp, multiple}) => {
+    // Variables
     let inputType;
     let inputSize = "small";
 
+    // Custom multi-select function
     const multiSelectDrop = (id) => {
         document.getElementById(id).classList.remove('display-none');
         document.getElementById('overlay').classList.remove('display-none');
     };
 
+    // Multi-select hide
     const multiSelectHide = (id) => {
         var items = document.getElementsByClassName("dropdownMenu");
 
@@ -25,7 +27,9 @@ const Input = ({id, type, title, helper, options = [], changeProp, valueProp, mu
         document.getElementById("overlay").classList.add('display-none');
     };
 
+    // Switch statement based on type requested when initializing input component
     switch (type) {
+        // React-Select input case
         case 'reactSelect':
             inputType = (
                 <Select
@@ -48,11 +52,13 @@ const Input = ({id, type, title, helper, options = [], changeProp, valueProp, mu
                 />
             );
             break;
+        // Short text input case
         case 'shorttext':
             inputType = (
                 <textarea id={id} name={id} className="shortTextInput"></textarea>
             );
             break;
+        // Type selector input case
         case 'typeSelect':
             inputType = (
                 <select id={id} name={id} className="selectInput">
@@ -65,6 +71,7 @@ const Input = ({id, type, title, helper, options = [], changeProp, valueProp, mu
                 </select>
             );
             break;
+        // Messenger selector options input case
         case 'messengerSelect':
             inputType = (
                 <select id={id} name={id} className="selectInput">
@@ -78,17 +85,20 @@ const Input = ({id, type, title, helper, options = [], changeProp, valueProp, mu
                 </select>
             );
             break;
+        // Long text input case
         case 'longtext':
             inputSize = "large";
             inputType = (
                 <textarea id={id} name={id} className="longTextInput"></textarea>
             );
             break;
+        // Datetime input case
         case 'date':
             inputType = (
                 <input id={id} name={id} className="datetimeInput" type="datetime-local" defaultValue={moment().format('YYYY-MM-DDThh:mm:ss')}></input>
             );
             break;
+        // Multselect input case
         case 'multiSelect':
             inputType = (
                 <div id={id}>
@@ -106,6 +116,7 @@ const Input = ({id, type, title, helper, options = [], changeProp, valueProp, mu
                 </div>
             );
             break;
+        // screen select input case
         case 'screenSelect':
             inputType = (
                 <select id={id} name={id} className="selectInput">
@@ -116,12 +127,14 @@ const Input = ({id, type, title, helper, options = [], changeProp, valueProp, mu
                 </select>
             );
             break;
+        // Default to short text if unknown
         default:
             inputType = (
                 <textarea id={id} name={id} className="shortTextInput"></textarea>
             );
     }
-
+    
+    // Input html
     return (
         <div className={inputSize === "small" ? "input inputSmall" : "input inputLarge"}>
             <div className="inputHeading">{title}</div>

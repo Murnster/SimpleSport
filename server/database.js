@@ -1,3 +1,4 @@
+// MySQL Connection
 const mysql = require('mysql');
 
 module.exports = mysql.createConnection({

@@ -1,10 +1,10 @@
-// import { useEffect, useState } from "react";
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboardCheck, faTableColumns, faCog, faCalendar, faPeopleGroup, faMessage  } from '@fortawesome/free-solid-svg-icons';
 import '../css/App.css';
 
+// Side Nav Bar component
 const SideNavbar = ({ setScreen, screen, openNav }) => {
+  // Side Nav Bar html
   return (
     <div className={openNav ? "sideNavBar" : "sideNavBar sideNavBarHidden"}>
       <div className="sideNavHeader">

@@ -1,26 +1,25 @@
+import { get, post } from "../network";
+import { faPeopleGroup } from '@fortawesome/free-solid-svg-icons'
+import { useState, useEffect } from "react";
+import FullContainer from "./FullContainer";
+import Input from "./Input";
+import Popup from "./Popup";
 import React from "react";
-
+import Toast from "./Toast";
 import '../css/App.css';
 import '../css/Roster.css';
 
-import { useState, useEffect } from "react";
-
-import { faPeopleGroup } from '@fortawesome/free-solid-svg-icons'
-import FullContainer from "./FullContainer";
-
-import { get, post } from "../network";
-import Input from "./Input";
-import Popup from "./Popup";
-import Toast from "./Toast";
-
+// Roster component
 const Roster = () => {
+    // States
     const [rosterData, getRosterData] = useState({roster: [], memberTypes: []});
     const [filteredRoster, getFiltered] = useState(null);
     const [openPopup, setOpenPopup] = useState(false);
     const [selectedType, setSelectedType] = useState();
     const [toastObj, setToastObj] = useState({ good: true, toastText: '', isOpen: false });
 
-    const openDashToast = (good, toastText) => {
+    // Open Roster Toast
+    const openRosterToast = (good, toastText) => {
         setToastObj({
             good,
             toastText,
@@ -28,11 +27,12 @@ const Roster = () => {
         });
 
         setTimeout(() => {
-            closeDashToast();
+            closeRosterToast();
         }, 5000);
     };
-  
-    const closeDashToast = () => {
+    
+    // Close Roster Toast
+    const closeRosterToast = () => {
         setToastObj({
           good: toastObj.good,
           text: toastObj.toastText,
@@ -40,6 +40,7 @@ const Roster = () => {
         });
     };
     
+    // Network calls to get roster data
     const fetchRosterData = async () => {
         let rosterData = {
             roster: [],
@@ -54,25 +55,30 @@ const Roster = () => {
         });
     };
     
+    // GET roster
     const fetchRoster = async () => {
         return await get('roster');
     };
 
+    // GET member types
     const fetchMemberTypes = async () => {
         return await get('memberTypes');
     };
 
+    // Member type helper function
     const getMemberType = (id) => {
         const title = rosterData?.memberTypes?.find(t => t.typeID === id)?.title;
         
         return title && title !== '' ? title : 'Unknown Role';
     };
 
+    // New member popup
     const newMember = () => {
         setSelectedType(0);
         setOpenPopup(true);
     };
 
+    // Edit member func
     const editMember = (member) => {
         setOpenPopup(true);
         setSelectedType(member?.memberTypeID ? member?.memberTypeID : 0);
@@ -98,6 +104,7 @@ const Roster = () => {
         }, 50);
     };
 
+    // Save member func
     const saveMember = async () => {
         const id = document.getElementById('newMemberID');
         const fname = document.getElementById('newMemberFName');
@@ -152,13 +159,14 @@ const Roster = () => {
         if (result.success) {
             fetchRosterData();
             setOpenPopup(false);
-            openDashToast(true, 'Your member was successfully saved!');
+            openRosterToast(true, 'Your member was successfully saved!');
         } else {
-            openDashToast(false, 'Your member was failed to save');
+            openRosterToast(false, 'Your member was failed to save');
             console.error('There was a failure trying to save this member');
         }
     };
 
+    //  Delete member func
     const deleteMember = async (memberID) => {
         if (memberID === "-1") {
             setOpenPopup(false);
@@ -171,22 +179,25 @@ const Roster = () => {
                 if (res.success) {
                     fetchRosterData();
                     setOpenPopup(false);
-                    openDashToast(true, 'Your member was successfully deleted!');
+                    openRosterToast(true, 'Your member was successfully deleted!');
                 } else {
-                    openDashToast(false, 'Your member was not deleted, please refresh and try again');
+                    openRosterToast(false, 'Your member was not deleted, please refresh and try again');
                 }
             }
         }
     };
 
+    // roster data multi select option creator
     const rosterDataMTOptions = [{value: 0, label: 'All types'}].concat(rosterData.memberTypes.map((m) => {
         return { value: m.typeID, label: m.title };
     }));
     
+    // membertype state setter
     const handleMType = (e) => {
         setSelectedType(e.value);
     };
 
+    // roster filter state setter
     const handleTableFilter = (e) => {
         const val = +e.value;
 
@@ -198,12 +209,14 @@ const Roster = () => {
         }
     };
 
+    // POST member
     const postMember = async (member) => {
         const res = await post('postMember', member);
 
         return res;
     };
 
+    // Hook
     useEffect(() => {
         const rosterEffect = async () => {
           await fetchRosterData();
@@ -213,6 +226,7 @@ const Roster = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Roster row html
     const rosterRows = (filteredRoster ? filteredRoster : rosterData.roster).map((member) =>
         <div key={'member-' + member.memberID} onClick={() => editMember(member)} className="rosterTableRow">
             <div className="tableCell">{member.firstName} {member.lastName}</div>
@@ -225,6 +239,7 @@ const Roster = () => {
         </div>
     );
     
+    // Popup html
     const rosterPopup = (
         <div className="createMember">
             <div className="createMemberHeader"></div>
@@ -265,6 +280,7 @@ const Roster = () => {
         </div>
     );
 
+    // roster html
     const roster = (
         <div>
             <div className="rosterHeader">
@@ -300,12 +316,13 @@ const Roster = () => {
             }
             {
                 toastObj.isOpen === true
-                ? <Toast good={toastObj.good} toastText={toastObj.toastText} closeToast={closeDashToast} />
+                ? <Toast good={toastObj.good} toastText={toastObj.toastText} closeToast={closeRosterToast} />
                 : null
             }
         </div>
     );
-
+    
+    // Roster html
     return (
         <div className="roster">
             <FullContainer headIcon={faPeopleGroup} title={'Roster'} content={roster} />

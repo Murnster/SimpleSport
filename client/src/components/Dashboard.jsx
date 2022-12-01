@@ -1,25 +1,25 @@
-import React from "react";
 import { useState, useEffect } from "react";
 import { get, post } from "../network"
-
+import { faCalendar, faCalendarCheck, faPeopleGroup, faMessage } from '@fortawesome/free-solid-svg-icons'
+import BigContainer from "./BigContainer";
 import emailjs from '@emailjs/browser';
-import moment from "moment";
-
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
-
-import { faCalendar, faCalendarCheck, faPeopleGroup, faMessage } from '@fortawesome/free-solid-svg-icons'
-import BigContainer from "./BigContainer";
-import SmallContainer from "./SmallContainer";
 import Input from "./Input";
+import moment from "moment";
+import React from "react";
+import SmallContainer from "./SmallContainer";
 import Toast from "./Toast";
 
+// Dashboard componnent
 const Dashboard = ({setScreen, teamName}) => {
+    // States
     const [dashboardData, getDashboardData] = useState({events: [], roster: [], eventTypes: [], memberTypes: []});
     const [quickEventType, setQuickEventType] = useState(0);
     const [toastObj, setToastObj] = useState({ good: true, toastText: '', isOpen: false });
 
+    // Color key for events
     const colorKey = {
       1: '#4f91cd',
       2: '#f53131',
@@ -38,6 +38,7 @@ const Dashboard = ({setScreen, teamName}) => {
       15: '#ffffff'
     };
 
+    // Open Toast function
     const openDashToast = (good, toastText) => {
       setToastObj({
         good,
@@ -50,6 +51,7 @@ const Dashboard = ({setScreen, teamName}) => {
       }, 5000);
     };
 
+    // Close Toast function
     const closeDashToast = () => {
       setToastObj({
         good: toastObj.good,
@@ -58,10 +60,12 @@ const Dashboard = ({setScreen, teamName}) => {
       });
     };
 
+    // Quick Event Type State handler
     const handleQEType = e => {
       setQuickEventType(e.value);
     };
 
+    // Network calls to get Dashboard data
     const fetchDashboard = async () => {
       let data = {
         events: [],
@@ -80,28 +84,34 @@ const Dashboard = ({setScreen, teamName}) => {
       });
     };
 
+    // Events network call
     const fetchEvents = async () => {
       return await get('events');
     };
 
+    // Roster network call
     const fetchRoster = async () => {
       return await get('roster');
     };
 
+    // Event types network call
     const fetchEventTypes = async () => {
       return await get('eventTypes');
     };
 
+    // Member types network call
     const fetchMemberTypes = async () => {
       return await get('memberTypes');
     };
 
+    // POST Event
     const postEvent = async (event) => {
       const res = await post('postEvent', event);
   
       return res;
     };
 
+    // Cancel and reset Quick Event details
     const cancelQuickEvent = () => {
       document.getElementById('newEventTitle').value='';
       document.getElementById('newEventType').value = 0;
@@ -110,6 +120,7 @@ const Dashboard = ({setScreen, teamName}) => {
       document.getElementById('newEventDesc').value='';
     };
 
+    // Save Quick Event
     const quickSaveEvent = async () => {
       const id = document.getElementById('newEventID');
       const title = document.getElementById('newEventTitle');
@@ -173,6 +184,7 @@ const Dashboard = ({setScreen, teamName}) => {
       }
     };
 
+    // Dashboard message function
     const dashboardMessage = async () => {
       const subject = document.getElementById('subject');
       const message = document.getElementById('message');
@@ -211,6 +223,7 @@ const Dashboard = ({setScreen, teamName}) => {
       });
     };
 
+    // Hook
     useEffect(() => {
       const dashboardEffect = async () => {
         await fetchDashboard();
@@ -219,11 +232,13 @@ const Dashboard = ({setScreen, teamName}) => {
       dashboardEffect();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
+    
+    // Mapping events for FullCalendar
     const events = dashboardData.events.map(ev => {
       return { title: ev.title, start: ev.startDate, end: ev.endDate, className: 'cursorPointer', backgroundColor: colorKey[ev.typeID], textColor: 'black' };
     });
     
+    // Calendar component
     const calendar = (
       <div className="dashCalContainer">
         <FullCalendar
@@ -240,7 +255,8 @@ const Dashboard = ({setScreen, teamName}) => {
         />
       </div>
     );
-
+    
+    // Quick Event component
     const upcomingEvents = (
       <div className="quickEvent">
         <div className="quickEventHeader"></div>
@@ -268,7 +284,8 @@ const Dashboard = ({setScreen, teamName}) => {
         </div>
       </div>
     );
-
+    
+    // Dashboard roster header component
     const dashRosterHead = (
       <div key={'dashRosterHead'} className="dashRosterRow dashRosterHead">
         <div>Name</div>
@@ -278,6 +295,7 @@ const Dashboard = ({setScreen, teamName}) => {
       </div>
     );
     
+    // Dashboard roster rows component
     const dashRoster = dashboardData.roster.map((member) =>
       <div key={'member-' + member.memberID.toString()} onClick={() => setScreen('Roster')} className="dashRosterRow cursorPointer">
         <div>{member.firstName} {member.lastName}</div>
@@ -286,14 +304,16 @@ const Dashboard = ({setScreen, teamName}) => {
         <div>{member.email}</div>
       </div>
     );
-
+    
+    // Dashboarder Roster component
     const dashRosterTable = (
       <div key={'dashRosterTable'} className="dashRosterTable">
         {dashRosterHead}
         {dashRoster}
       </div>
     );
-
+    
+    // Dashboard message team component
     const messageTeam = (
       <div className="msgTeamBox">
         <Input id="subject" type="shorttext" title="Subject" />
@@ -304,7 +324,8 @@ const Dashboard = ({setScreen, teamName}) => {
         </div>
       </div>
     );
-
+    
+    // Dashboard html
     return (
         <div className="dashboard">
           <div className="row">

@@ -1,3 +1,4 @@
+// Express connection and server calls
 const express = require('express');
 const cors = require('cors');
 const bp = require('body-parser');
@@ -13,6 +14,7 @@ app.use(bp.urlencoded({
 
 app.use(bp.json());
 
+// Get All Events
 app.get("/events", (req, res) => {
     db.query(`SELECT * FROM events`, (err, result) => {
         if (err) { 
@@ -23,6 +25,7 @@ app.get("/events", (req, res) => {
     });
 });
 
+// Get all Roster members
 app.get("/roster", (req, res) => {
     db.query(`SELECT * FROM roster`, (err, result) => {
         if (err) { 
@@ -33,6 +36,7 @@ app.get("/roster", (req, res) => {
     });
 });
 
+// Get all member types
 app.get("/memberTypes", (req, res) => {
     db.query(`SELECT * FROM memberTypes`, (err, result) => {
         if (err) { 
@@ -43,6 +47,7 @@ app.get("/memberTypes", (req, res) => {
     });
 });
 
+// Get  all event types
 app.get("/eventTypes", (req, res) => {
     db.query(`SELECT * FROM eventTypes`, (err, result) => {
         if (err) { 
@@ -53,6 +58,7 @@ app.get("/eventTypes", (req, res) => {
     });
 });
 
+// Save Event
 app.post('/postEvent', (req, res) => {
     const payload = req.body;
     let hasID = false;
@@ -79,6 +85,7 @@ app.post('/postEvent', (req, res) => {
     });
 });
 
+// Delete Event
 app.post('/deleteEvent', (req, res) => {
     const payload = req.body;
     
@@ -99,6 +106,7 @@ app.post('/deleteEvent', (req, res) => {
     }
 });
 
+// Save Member
 app.post('/postMember', (req, res) => {
     const payload = req.body;
     let hasID = false;
@@ -125,6 +133,7 @@ app.post('/postMember', (req, res) => {
     });
 });
 
+// Delete Member
 app.post('/deleteMember', (req, res) => {
     const payload = req.body;
     
@@ -145,6 +154,7 @@ app.post('/deleteMember', (req, res) => {
     }
 });
 
+// Get all necessary messenger data
 app.get("/messenger", (req, res) => {
     db.query(`SELECT roster.memberID, roster.firstName, roster.lastName, roster.email, roster.memberTypeID, roster.emContactName, roster.emEmail, memberTypes.title FROM roster INNER JOIN memberTypes on roster.memberTypeID = memberTypes.typeID`, (err, result) => {
         if (err) {
@@ -155,6 +165,7 @@ app.get("/messenger", (req, res) => {
     });
 });
 
+// Get all site data
 app.get("/siteData", (req, res) => {
     db.query(`SELECT * FROM siteData`, (err, result) => {
         if (err) {
@@ -165,7 +176,7 @@ app.get("/siteData", (req, res) => {
     });
 });
 
-
+// Save site data
 app.post("/postSiteData", (req, res) => {
     const payload = req.body;
     
@@ -186,6 +197,7 @@ app.post("/postSiteData", (req, res) => {
     });
 });
 
+// Save event type
 app.post('/postEventType', (req, res) => {
     const payload = req.body;
     let hasID = false;
@@ -212,6 +224,7 @@ app.post('/postEventType', (req, res) => {
     });
 });
 
+// Save member type
 app.post('/postMemberType', (req, res) => {
     const payload = req.body;
     let hasID = false;
@@ -238,4 +251,5 @@ app.post('/postMemberType', (req, res) => {
     });
 });
 
+// App server is running on port 5000
 app.listen(5000, () => {console.log("Server started on port 5000") });

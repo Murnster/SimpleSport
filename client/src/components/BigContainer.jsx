@@ -1,9 +1,9 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from "react";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
+// BigContainer component 
 const BigContainer = ({headIcon, title, content, headerClick}) => {
-    
+    // BigContainer html
     return (
         <div className="bigContainer">
             <div className="containerHeader" onClick={headerClick}>

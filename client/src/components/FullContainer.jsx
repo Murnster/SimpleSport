@@ -1,9 +1,9 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from "react";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
+//FullContainer component
 const FullContainer = ({headIcon, title, content}) => {
-    
+    // FullContainer html
     return (
         <div className="fullContainer">
             <div className="containerHeader">

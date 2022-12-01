@@ -1,27 +1,25 @@
-import React from "react";
-
+import { useState, useEffect } from "react";
+import { get, post } from "../network";
 import { faCalendar } from '@fortawesome/free-solid-svg-icons'
-
+import Input from "./Input";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-
-import moment from "moment";
-
-import { useState, useEffect } from "react";
-import { get, post } from "../network";
-
 import FullContainer from "./FullContainer";
+import moment from "moment";
 import Popup from "./Popup";
-import Input from "./Input";
+import React from "react";
 import Toast from "./Toast";
 
+// Schedule component
 const Schedule = () => {
+  // States
   const [scheduleData, getScheduleData] = useState({events: [], eventTypes: []});
   const [openPopup, setOpenPopup] = useState(false);
   const [selectedType, setSelectedType] = useState();
   const [toastObj, setToastObj] = useState({ good: true, toastText: '', isOpen: false });
   
+  // Color key for events
   const colorKey = {
     1: '#4f91cd',
     2: '#f53131',
@@ -40,7 +38,8 @@ const Schedule = () => {
     15: '#ffffff'
   };
   
-  const openDashToast = (good, toastText) => {
+  // Open Schedule toast
+  const openScheduleToast = (good, toastText) => {
     setToastObj({
       good,
       toastText,
@@ -48,11 +47,12 @@ const Schedule = () => {
     });
 
     setTimeout(() => {
-      closeDashToast();
+      closeScheduleToast();
     }, 5000);
   };
 
-  const closeDashToast = () => {
+  // Close Schedule toast
+  const closeScheduleToast = () => {
     setToastObj({
       good: toastObj.good,
       text: toastObj.toastText,
@@ -60,6 +60,7 @@ const Schedule = () => {
     });
   };
 
+  // Network calls for schedule data
   const fetchSchedule = async () => {
     let scheduleData = {
       events: [],
@@ -74,14 +75,17 @@ const Schedule = () => {
     });
   };
 
+  // GET events
   const fetchEvents = async () => {
     return await get('events');
   };
 
+  // GET event types
   const fetchEventTypes = async () => {
     return await get('eventTypes');
   };
   
+  // New event func
   const newEvent = (date) => {
     setSelectedType(0);
     setOpenPopup(true);
@@ -97,6 +101,7 @@ const Schedule = () => {
     },100);
   };
 
+  // Edit event func
   const editEvent = (event) => {
     setOpenPopup(true);
     setSelectedType(event.id ? +event.extendedProps.typeID : 0);
@@ -127,6 +132,7 @@ const Schedule = () => {
     }, 50);
   }
 
+  // Link generation for gmail and outlook
   const serviceLink = (service, eventID) => {
     const event = scheduleData.events.find(ev => +ev.id === +eventID);
     
@@ -158,6 +164,7 @@ const Schedule = () => {
     }
   }
 
+  // Save event function
   const saveEvent = async () => {
     const id = document.getElementById('newEventID');
     const title = document.getElementById('newEventTitle');
@@ -202,13 +209,14 @@ const Schedule = () => {
     if (result.success) {
       fetchSchedule();
       setOpenPopup(false);
-      openDashToast(true, 'Your event was successfully saved!');
+      openScheduleToast(true, 'Your event was successfully saved!');
     } else {
-      openDashToast(false, 'There was a failure trying to save this event');
+      openScheduleToast(false, 'There was a failure trying to save this event');
       console.error('There was a failure trying to save this event');
     }
   };
 
+  // Delete event func
   const deleteEvent = async (eventID) => {
     if (eventID === "-1") {
       setOpenPopup(false);
@@ -221,28 +229,32 @@ const Schedule = () => {
         if (res.success) {
           fetchSchedule();
           setOpenPopup(false);
-          openDashToast(true, 'Your event was successfully deleted!');
+          openScheduleToast(true, 'Your event was successfully deleted!');
         } else {
-          openDashToast(true, 'Your event was not deleted, please refresh and try again');
+          openScheduleToast(true, 'Your event was not deleted, please refresh and try again');
         }
       }
     }
   };
 
+  // Event type options 
   const scheduleDataETOptions = scheduleData.eventTypes.map((et) => {
     return { value: et.typeID, label: et.title };
   });
 
+  // Event type state setter
   const handleEType = (e) => {
     setSelectedType(e.value);
   };
 
+  // POST Event
   const postEvent = async (event) => {
     const res = await post('postEvent', event);
 
     return res;
   };
 
+  // Hook
   useEffect(() => {
     const scheduleEffect = async () => {
       await fetchSchedule();
@@ -252,6 +264,7 @@ const Schedule = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Popup html
   const eventPopup = (
     <div className="createEvent">
       <div className="createEventHeader"></div>
@@ -290,6 +303,7 @@ const Schedule = () => {
     </div>
   );
 
+  // Calendar
   const calendar = (
     <div style={{postion: 'relative'}}>
       <div className="scheduleHeader"></div>
@@ -331,12 +345,13 @@ const Schedule = () => {
       }
       {
         toastObj.isOpen === true
-        ? <Toast good={toastObj.good} toastText={toastObj.toastText} closeToast={closeDashToast} />
+        ? <Toast good={toastObj.good} toastText={toastObj.toastText} closeToast={closeScheduleToast} />
         : null
       }
     </div>
   );
 
+  // Return calendar html
   return (
       <div className="schedule">
           <FullContainer headIcon={faCalendar} title={"Schedule"} content={ calendar } />

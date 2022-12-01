@@ -1,3 +1,4 @@
+// Network call shorthand for GET
 export const get = async (url) => {
     // Build production
     // const response = await fetch('http://localhost:5000/' + url);
@@ -10,6 +11,7 @@ export const get = async (url) => {
     return data;
 };
 
+// Network call shorthand for POST
 export const post = async (url, payload) => {
     // Build production
     // const response = await fetch('http://localhost:5000/' + url);
