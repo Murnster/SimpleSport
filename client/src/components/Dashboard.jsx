@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { get, post } from "../network"
-import { faCalendar, faCalendarCheck, faPeopleGroup, faMessage } from '@fortawesome/free-solid-svg-icons'
+import { faCalendar, faCalendarCheck, faPeopleGroup, faMessage } from '@fortawesome/free-solid-svg-icons';
 import BigContainer from "./BigContainer";
 import emailjs from '@emailjs/browser';
 import FullCalendar from "@fullcalendar/react";
@@ -12,7 +12,7 @@ import React from "react";
 import SmallContainer from "./SmallContainer";
 import Toast from "./Toast";
 
-// Dashboard componnent
+// Dashboard component
 const Dashboard = ({setScreen, teamName}) => {
     // States
     const [dashboardData, getDashboardData] = useState({events: [], roster: [], eventTypes: [], memberTypes: []});

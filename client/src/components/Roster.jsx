@@ -200,6 +200,7 @@ const Roster = () => {
     // roster filter state setter
     const handleTableFilter = (e) => {
         const val = +e.value;
+        console.log(val);
 
         if (val === 0) {
             getFiltered(null);
@@ -292,7 +293,7 @@ const Roster = () => {
                     options={rosterDataMTOptions}
                     changeProp={handleTableFilter}
                     multiple={false}
-                    valueProp={rosterDataMTOptions.find((type) => +type.value === selectedType)}
+                    valueProp={rosterDataMTOptions.find((type) => +type.value === filteredRoster)}
                 />
             </div>
             <div className="rosterTable">
