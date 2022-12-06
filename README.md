@@ -12,3 +12,32 @@ You will need React, Node, Express and MySQL to run the project. The steps below
 ### In another terminal, navigate to server. Run `npm run dev` to start the server. This will run on port 5000.
 ### Go to database.js and master.sql in server. In MySQL, create a table. Copy all the master.sql commands and run them in your table. Change the database.js file to work with your MySQL.
 ### Open http://localhost:3000 and check it out! Thanks for reading!
+
+# Functionality
+### Dashboard
+View weekly schedule, quick create an event, view short roster details and quick message team
+
+![dashboard2](https://user-images.githubusercontent.com/58569299/205906792-790752c1-19ca-452d-a812-d1b542c2ac00.png)
+
+### Schedule
+Create, edit, delete events on your team's Schedule using FullCalendar
+
+![schedule](https://user-images.githubusercontent.com/58569299/205906830-5d28eb48-24f9-40a2-83cb-2c1b8a1c5249.png)
+
+### Roster
+Create, edit, delete team members on your team's roster
+
+![roster](https://user-images.githubusercontent.com/58569299/205906885-93bbb742-d4f7-4417-ba9e-07661d1e6677.png)
+
+### Messenger
+Select team members or member roles to messenge via email using Email JS
+
+![messenger](https://user-images.githubusercontent.com/58569299/205906928-fd33c4f8-88a1-420b-9416-0bdb6d27aa11.png)
+
+### Settings
+Edit team name, select home screen and add new event or member types
+
+![settings](https://user-images.githubusercontent.com/58569299/205906979-9ca5aa5a-f285-47d7-a851-737e3199635f.png)
+
+# Database schema
+Coming soon
