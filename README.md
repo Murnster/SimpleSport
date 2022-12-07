@@ -40,4 +40,6 @@ Edit team name, select home screen and add new event or member types
 ![settings](https://user-images.githubusercontent.com/58569299/205906979-9ca5aa5a-f285-47d7-a851-737e3199635f.png)
 
 # Database schema
-Coming soon
+
+![dbshema](https://user-images.githubusercontent.com/58569299/206069337-7f9b463a-80e2-443c-9b10-cac8c6b28083.png)
+
