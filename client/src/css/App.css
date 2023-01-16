@@ -356,6 +356,10 @@ body {
     animation-name: slidein;
 }
 
+.appPopupWarning {
+    font-size: 24px;
+}
+
 @keyframes slidein {
     from {
         right: -300px;
@@ -389,4 +393,68 @@ body {
 
 .toastExit {
     padding: 5px;
+}
+
+@media screen and (max-width: 600px) {
+    .hideMobile {
+        display: none !important;
+    }
+    
+    .dashboard .row {
+        flex-direction: column;
+    }
+    
+    .bigContainer {
+        width: 95%;
+    }
+    
+    .smallContainer {
+        width: 95%;
+    }
+    
+    .quickEventBody .input {
+        width: 88%;
+    }
+    
+    .dashRosterRow div {
+        width: 50%;
+    }
+    
+    .popupContainer {
+        left: 5% !important;
+        right: 5% !important;
+        top: 7.5% !important;
+        bottom: 5% !important;
+        width: 90% !important;
+    }
+    
+    .popupBody {
+        overflow-y: scroll !important;
+        overflow: hidden;
+    }
+    
+    .createEventBody .row {
+        flex-direction: column;
+    }
+    
+    .createEventBody .input {
+        width: 90% !important;
+    }
+    
+    .createEventFooter {
+        overflow-x: scroll;
+    }
+    
+    .rosterHeader .inputSmall {
+        width: 37.5%;
+        margin-right: 10px;
+    }
+    
+    .messengerEmailForm .inputLarge {
+        width: 90%;
+    }
+    
+    #newTeamName {
+        height: 40%;
+    }
 }

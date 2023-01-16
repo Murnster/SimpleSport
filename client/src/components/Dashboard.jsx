@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { get, post } from "../network"
 import { faCalendar, faCalendarCheck, faPeopleGroup, faMessage } from '@fortawesome/free-solid-svg-icons';
 import BigContainer from "./BigContainer";
 import emailjs from '@emailjs/browser';
@@ -13,12 +12,11 @@ import SmallContainer from "./SmallContainer";
 import Toast from "./Toast";
 
 // Dashboard component
-const Dashboard = ({setScreen, teamName}) => {
+const Dashboard = ({setScreen, teamName, events, setEvents, roster, eventTypes, memberTypes}) => {
     // States
-    const [dashboardData, getDashboardData] = useState({events: [], roster: [], eventTypes: [], memberTypes: []});
     const [quickEventType, setQuickEventType] = useState(0);
     const [toastObj, setToastObj] = useState({ good: true, toastText: '', isOpen: false });
-
+    
     // Color key for events
     const colorKey = {
       1: '#4f91cd',
@@ -63,52 +61,6 @@ const Dashboard = ({setScreen, teamName}) => {
     // Quick Event Type State handler
     const handleQEType = e => {
       setQuickEventType(e.value);
-    };
-
-    // Network calls to get Dashboard data
-    const fetchDashboard = async () => {
-      let data = {
-        events: [],
-        roster: [],
-        eventTypes: [],
-        memberTypes: []
-      };
-      
-      Promise.all([fetchEvents(), fetchRoster(), fetchEventTypes(), fetchMemberTypes()]).then((arrays) => {
-        data.events = arrays[0];
-        data.roster = arrays[1];
-        data.eventTypes = arrays[2];
-        data.memberTypes = arrays[3];
-      }).then(() => {
-        getDashboardData(data);
-      });
-    };
-
-    // Events network call
-    const fetchEvents = async () => {
-      return await get('events');
-    };
-
-    // Roster network call
-    const fetchRoster = async () => {
-      return await get('roster');
-    };
-
-    // Event types network call
-    const fetchEventTypes = async () => {
-      return await get('eventTypes');
-    };
-
-    // Member types network call
-    const fetchMemberTypes = async () => {
-      return await get('memberTypes');
-    };
-
-    // POST Event
-    const postEvent = async (event) => {
-      const res = await post('postEvent', event);
-  
-      return res;
     };
 
     // Cancel and reset Quick Event details
@@ -160,28 +112,16 @@ const Dashboard = ({setScreen, teamName}) => {
         location: location.value
       };
       
-      const result = await postEvent(payload);
+      openDashToast(true, 'Your new event was successfully saved!');
 
-      if (result.success) {
-        openDashToast(true, 'Your new event was successfully saved!');
-
-        id.value = '';
-        title.value = '';
-        start.value = '';
-        end.value = '';
-        desc.value = '';
-        location.value = '';
-
-        await fetchEvents().then((eventsPayload) => getDashboardData({
-          events: eventsPayload,
-          roster: dashboardData.roster,
-          eventTypes: dashboardData.eventTypes,
-          memberTypes: dashboardData.memberTypes
-        }));
-      } else {
-        openDashToast(false, 'There was a failure trying to save this event');
-        console.error('There was a failure trying to save this event');
-      }
+      id.value = '';
+      title.value = '';
+      start.value = '';
+      end.value = '';
+      desc.value = '';
+      location.value = '';
+      
+      setEvents([...events, payload]);
     };
 
     // Dashboard message function
@@ -196,12 +136,12 @@ const Dashboard = ({setScreen, teamName}) => {
       } else if (from.value === "") {
         from.focus();
         return;
-      }else if (message.value === "") {
+      } else if (message.value === "") {
         message.focus();
         return;
       }
-
-      dashboardData.roster.forEach(i => {
+      
+      roster.forEach(i => {
         const emailPayload = {
           subject: subject.value,
           to_name: `${i.firstName} ${i.lastName}`,
@@ -222,19 +162,15 @@ const Dashboard = ({setScreen, teamName}) => {
         });
       });
     };
-
+    
     // Hook
     useEffect(() => {
-      const dashboardEffect = async () => {
-        await fetchDashboard();
-      };
-  
-      dashboardEffect();
+      
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     
     // Mapping events for FullCalendar
-    const events = dashboardData.events.map(ev => {
+    const calEvents = events.map(ev => {
       return { title: ev.title, start: ev.startDate, end: ev.endDate, className: 'cursorPointer', backgroundColor: colorKey[ev.typeID], textColor: 'black' };
     });
     
@@ -249,7 +185,7 @@ const Dashboard = ({setScreen, teamName}) => {
           height={475}
           firstDay={1}
           eventDisplay="block"
-          events={events}
+          events={calEvents}
           headerToolbar={{start: "title", center: '', end: 'prev,next'}}
           eventClick={() => {setScreen('Schedule')}}
         />
@@ -267,7 +203,7 @@ const Dashboard = ({setScreen, teamName}) => {
             type="reactSelect"
             title="Event Type"
             helper="Select Type of your event"
-            options={dashboardData.eventTypes.map((et) => {
+            options={eventTypes.map((et) => {
               return { value: et.typeID, label: et.title };
             })}
             changeProp={handleQEType}
@@ -290,18 +226,18 @@ const Dashboard = ({setScreen, teamName}) => {
       <div key={'dashRosterHead'} className="dashRosterRow dashRosterHead">
         <div>Name</div>
         <div>Role</div>
-        <div>Phone</div>
-        <div>Email</div>
+        <div className="hideMobile">Phone</div>
+        <div className="hideMobile">Email</div>
       </div>
     );
     
     // Dashboard roster rows component
-    const dashRoster = dashboardData.roster.map((member) =>
+    const dashRoster = roster.map((member) =>
       <div key={'member-' + member.memberID.toString()} onClick={() => setScreen('Roster')} className="dashRosterRow cursorPointer">
         <div>{member.firstName} {member.lastName}</div>
-        <div>{dashboardData.memberTypes.find(t => t.typeID === member.memberTypeID)?.title}</div>
-        <div>{member.phone}</div>
-        <div>{member.email}</div>
+        <div>{memberTypes.find(t => t.typeID === member.memberTypeID)?.title}</div>
+        <div className="hideMobile">{member.phone}</div>
+        <div className="hideMobile">{member.email}</div>
       </div>
     );
     

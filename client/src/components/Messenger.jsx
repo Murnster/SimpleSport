@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { faMessage } from '@fortawesome/free-solid-svg-icons'
-import { get } from "../network";
 import emailjs from '@emailjs/browser';
 import FullContainer from "./FullContainer";
 import Input from "./Input";
@@ -9,7 +8,7 @@ import '../css/App.css';
 import '../css/Messenger.css';
 
 // Messenger component
-const Messenger = ({teamName}) => {
+const Messenger = ({teamName, roster, memberTypes}) => {
     // States
     const [messengerData, getMessengerData] = useState([]);
     const [selectedMembers, setSelectedMembers] = useState([]);
@@ -46,36 +45,24 @@ const Messenger = ({teamName}) => {
           recipientOptions: [],
           messageTypeOptions: []
         };
-  
-        Promise.all([fetchMessenger(), fetchMemberTypes()]).then((arrays) => {
-          data.recipients = arrays[0];
-          data.memberTypes = arrays[1];
-            
-          const staticOptions = [
+        
+        data.recipients = roster;
+        data.memberTypes = memberTypes;
+        
+        const staticOptions = [
             { value: -2, label: 'Send to all members' },
             { value: -1, label: 'Send to selected member types'}
-          ];
+        ];
 
-          data.recipientOptions = staticOptions.concat(arrays[0].map((r) => {
+        data.recipientOptions = staticOptions.concat(roster.map((r) => {
             return { value: r.memberID, label: `${r.firstName} ${r.lastName}` };
-          }));
+        }));
 
-          data.messageTypeOptions = arrays[1].map((mt) => {
+        data.messageTypeOptions = memberTypes.map((mt) => {
             return { value: mt.typeID, label: mt.title };
-          });
-        }).then(() => {
-            getMessengerData(data);
         });
-    };
-
-    // GET Messenger route
-    const fetchMessenger = async () => {
-        return await get('messenger');
-    };
-
-    // GET Memeber Types route
-    const fetchMemberTypes = async () => {
-        return await get('memberTypes');
+        
+        getMessengerData(data);
     };
 
     // Set selected recipients state

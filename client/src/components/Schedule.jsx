@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { get, post } from "../network";
 import { faCalendar } from '@fortawesome/free-solid-svg-icons'
 import Input from "./Input";
 import FullCalendar from "@fullcalendar/react";
@@ -12,9 +11,8 @@ import React from "react";
 import Toast from "./Toast";
 
 // Schedule component
-const Schedule = () => {
+const Schedule = ({events, setEvents, eventTypes, isMobile}) => {
   // States
-  const [scheduleData, getScheduleData] = useState({events: [], eventTypes: []});
   const [openPopup, setOpenPopup] = useState(false);
   const [selectedType, setSelectedType] = useState();
   const [toastObj, setToastObj] = useState({ good: true, toastText: '', isOpen: false });
@@ -58,31 +56,6 @@ const Schedule = () => {
       text: toastObj.toastText,
       isOpen: false
     });
-  };
-
-  // Network calls for schedule data
-  const fetchSchedule = async () => {
-    let scheduleData = {
-      events: [],
-      eventTypes: []
-    };
-
-    Promise.all([fetchEvents(), fetchEventTypes()]).then((arrays) => {
-      scheduleData.events = arrays[0];
-      scheduleData.eventTypes = arrays[1];
-    }).then(() => {
-      getScheduleData(scheduleData);
-    });
-  };
-
-  // GET events
-  const fetchEvents = async () => {
-    return await get('events');
-  };
-
-  // GET event types
-  const fetchEventTypes = async () => {
-    return await get('eventTypes');
   };
   
   // New event func
@@ -134,7 +107,7 @@ const Schedule = () => {
 
   // Link generation for gmail and outlook
   const serviceLink = (service, eventID) => {
-    const event = scheduleData.events.find(ev => +ev.id === +eventID);
+    const event = events.find(ev => +ev.id === +eventID);
     
     if (event) {
       if (service === 'google') {
@@ -194,26 +167,36 @@ const Schedule = () => {
       return;
     }
     
-    const payload = {
-      id: id.value,
-      title: title.value,
-      typeID: selectedType,
-      startDate: start.value,
-      endDate: end.value,
-      desc: desc.value,
-      location: location.value
-    };
+    let newID = null;
     
-    const result = await postEvent(payload);
-
-    if (result.success) {
-      fetchSchedule();
-      setOpenPopup(false);
-      openScheduleToast(true, 'Your event was successfully saved!');
+    if (id.value === '-1') {
+      newID = events.length;
+      
+      const payload = {
+        id: newID ? newID : id.value,
+        title: title.value,
+        typeID: selectedType,
+        startDate: start.value,
+        endDate: end.value,
+        desc: desc.value,
+        location: location.value
+      };
+      
+      setEvents([...events, payload]);
     } else {
-      openScheduleToast(false, 'There was a failure trying to save this event');
-      console.error('There was a failure trying to save this event');
+      const edit = events.find(e => +e.id === +id.value);
+      
+      edit.title = title.value;
+      edit.typeID = selectedType;
+      edit.startDate = start.value;
+      edit.endDate = end.value;
+      edit.desc = desc.value;
+      edit.location = location.value;
     }
+    
+
+    setOpenPopup(false);
+    openScheduleToast(true, 'Your event was successfully saved!');
   };
 
   // Delete event func
@@ -221,24 +204,19 @@ const Schedule = () => {
     if (eventID === "-1") {
       setOpenPopup(false);
     } else {
-      if (window.confirm('Are you sure you want to delete this event?')) {
-        const res = await post('deleteEvent', {
-          id: eventID
-        });
-        
-        if (res.success) {
-          fetchSchedule();
+        if (window.confirm('Are you sure you want to delete this event?')) {
           setOpenPopup(false);
+          
+          const newEventsArray = events.filter(e => parseInt(e?.id) !== +eventID);
+          
+          setEvents([...newEventsArray]);
           openScheduleToast(true, 'Your event was successfully deleted!');
-        } else {
-          openScheduleToast(true, 'Your event was not deleted, please refresh and try again');
         }
-      }
     }
   };
 
   // Event type options 
-  const scheduleDataETOptions = scheduleData.eventTypes.map((et) => {
+  const scheduleDataETOptions = eventTypes.map((et) => {
     return { value: et.typeID, label: et.title };
   });
 
@@ -247,20 +225,9 @@ const Schedule = () => {
     setSelectedType(e.value);
   };
 
-  // POST Event
-  const postEvent = async (event) => {
-    const res = await post('postEvent', event);
-
-    return res;
-  };
-
   // Hook
   useEffect(() => {
-    const scheduleEffect = async () => {
-      await fetchSchedule();
-    }
-
-    scheduleEffect();
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -312,10 +279,10 @@ const Schedule = () => {
           plugins={ 
             [ dayGridPlugin, interactionPlugin ]
           }
-          initialView="dayGridMonth"
+          initialView={isMobile ? "dayGridDay" : "dayGridMonth"}
           height={750}
           eventDisplay="block"
-          events={scheduleData?.events.map(ev => {
+          events={events.map(ev => {
             return { id: ev.id, title: ev.title, start: ev.startDate, end: ev.endDate, typeID: ev.typeID, desc: ev.desc, location: ev.location, backgroundColor: colorKey[ev.typeID], textColor: 'black' };
           })}
           eventClick={info => editEvent(info.event)}
@@ -331,10 +298,15 @@ const Schedule = () => {
               },
             },
           }}
-          headerToolbar={{
-            left: 'dayGridMonth,dayGridWeek,dayGridDay',
-            center: 'title',
-            right: 'newEventButton prev,next'
+          headerToolbar={
+            isMobile ? {
+              left: '',
+              center: 'title',
+              right: 'prev,next'
+            } : {
+              left: 'dayGridMonth,dayGridWeek,dayGridDay',
+              center: 'title',
+              right: 'newEventButton prev,next'
           }}
         />
       </div>

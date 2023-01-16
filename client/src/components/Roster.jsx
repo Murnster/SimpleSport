@@ -1,4 +1,3 @@
-import { get, post } from "../network";
 import { faPeopleGroup } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect } from "react";
 import FullContainer from "./FullContainer";
@@ -10,9 +9,8 @@ import '../css/App.css';
 import '../css/Roster.css';
 
 // Roster component
-const Roster = () => {
+const Roster = ({roster, setRoster, memberTypes}) => {
     // States
-    const [rosterData, getRosterData] = useState({roster: [], memberTypes: []});
     const [filteredRoster, getFiltered] = useState(null);
     const [openPopup, setOpenPopup] = useState(false);
     const [selectedType, setSelectedType] = useState();
@@ -39,35 +37,10 @@ const Roster = () => {
           isOpen: false
         });
     };
-    
-    // Network calls to get roster data
-    const fetchRosterData = async () => {
-        let rosterData = {
-            roster: [],
-            memberTypes: []
-        }
-        
-        Promise.all([fetchRoster(), fetchMemberTypes()]).then((arrays) => {
-            rosterData.roster = arrays[0];
-            rosterData.memberTypes = arrays[1];
-        }).then(() => {
-            getRosterData(rosterData);
-        });
-    };
-    
-    // GET roster
-    const fetchRoster = async () => {
-        return await get('roster');
-    };
-
-    // GET member types
-    const fetchMemberTypes = async () => {
-        return await get('memberTypes');
-    };
 
     // Member type helper function
     const getMemberType = (id) => {
-        const title = rosterData?.memberTypes?.find(t => t.typeID === id)?.title;
+        const title = memberTypes?.find(t => t.typeID === id)?.title;
         
         return title && title !== '' ? title : 'Unknown Role';
     };
@@ -111,7 +84,6 @@ const Roster = () => {
         const lname = document.getElementById('newMemberLName');
         const phone = document.getElementById('newMemberPhone');
         const email = document.getElementById('newMemberEmail');
-        const memberType = document.getElementById('newMemberType');
         const emName = document.getElementById('newMemberEmName');
         const emPhone = document.getElementById('newMemberEmPhone');
         const emEmail = document.getElementById('newMemberEmEmail');
@@ -128,8 +100,7 @@ const Roster = () => {
         } else if (email.value === "" || email.value.length > 50) {
             email.focus();
             return;
-        } else if (selectedType < 0|| !selectedType) {
-            memberType.focus();
+        } else if (selectedType < 0 || !selectedType) {
             return;
         } else if (emName.value === "" || emName.value.length > 50) {
             emName.focus();
@@ -141,29 +112,40 @@ const Roster = () => {
             emEmail.focus();
             return;
         }
-
-        const payload = {
-            id: id.value,
-            fname: fname.value,
-            lname: lname.value,
-            phone: phone.value,
-            email: email.value,
-            memberTypeID: selectedType,
-            emName: emName.value,
-            emPhone: emPhone.value,
-            emEmail: emEmail.value
-        }
-
-        const result = await postMember(payload);
-
-        if (result.success) {
-            fetchRosterData();
-            setOpenPopup(false);
-            openRosterToast(true, 'Your member was successfully saved!');
+        
+        let newID = null;
+    
+        if (id.value === '-1') {
+            newID = roster.length;
+            
+            const payload = {
+                memberID: newID ? newID : id.value,
+                firstName: fname.value,
+                lastName: lname.value,
+                phone: phone.value,
+                email: email.value,
+                memberTypeID: selectedType,
+                emContactName: emName.value,
+                emPhone: emPhone.value,
+                emEmail: emEmail.value
+            };
+            
+            setRoster([...roster, payload]);
         } else {
-            openRosterToast(false, 'Your member was failed to save');
-            console.error('There was a failure trying to save this member');
+            const member = roster.find(r => +r.memberID === +id.value);
+            
+            member.firstName = fname.value;
+            member.lastName = lname.value;
+            member.phone = phone.value;
+            member.email = email.value;
+            member.memberTypeID = selectedType;
+            member.emContactName = emName.value;
+            member.emPhone = emPhone.value;
+            member.emEmail = emEmail.value;
         }
+        
+        setOpenPopup(false);
+        openRosterToast(true, 'Your member was successfully saved!');
     };
 
     //  Delete member func
@@ -172,23 +154,18 @@ const Roster = () => {
             setOpenPopup(false);
         } else {
             if (window.confirm('Are you sure you want to delete this member?')) {
-                const res = await post('deleteMember', {
-                    id: memberID
-                });
-
-                if (res.success) {
-                    fetchRosterData();
-                    setOpenPopup(false);
-                    openRosterToast(true, 'Your member was successfully deleted!');
-                } else {
-                    openRosterToast(false, 'Your member was not deleted, please refresh and try again');
-                }
+                setOpenPopup(false);
+                
+                const newRosterArray = roster.filter(r => +r.memberID !== memberID);
+                
+                setRoster([...newRosterArray]);
+                openRosterToast(true, 'Your member was successfully deleted!');
             }
         }
     };
 
     // roster data multi select option creator
-    const rosterDataMTOptions = [{value: 0, label: 'All types'}].concat(rosterData.memberTypes.map((m) => {
+    const rosterDataMTOptions = [{value: 0, label: 'All types'}].concat(memberTypes.map((m) => {
         return { value: m.typeID, label: m.title };
     }));
     
@@ -200,43 +177,31 @@ const Roster = () => {
     // roster filter state setter
     const handleTableFilter = (e) => {
         const val = +e.value;
-        console.log(val);
-
+        
         if (val === 0) {
             getFiltered(null);
         } else {
-            const filteredArray = rosterData.roster.filter(r => +r.memberTypeID === val);
+            const filteredArray = roster.filter(r => +r.memberTypeID === val);
             getFiltered(filteredArray);
         }
     };
 
-    // POST member
-    const postMember = async (member) => {
-        const res = await post('postMember', member);
-
-        return res;
-    };
-
     // Hook
     useEffect(() => {
-        const rosterEffect = async () => {
-          await fetchRosterData();
-        }
-    
-        rosterEffect();
+        
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Roster row html
-    const rosterRows = (filteredRoster ? filteredRoster : rosterData.roster).map((member) =>
+    const rosterRows = (filteredRoster ? filteredRoster : roster).map((member) =>
         <div key={'member-' + member.memberID} onClick={() => editMember(member)} className="rosterTableRow">
             <div className="tableCell">{member.firstName} {member.lastName}</div>
             <div className="tableCell">{getMemberType(member.memberTypeID)}</div>
-            <div className="tableCell">{member.phone}</div>
-            <div className="tableCell">{member.email}</div>
-            <div className="tableCell rosterHide">{member.emContactName}</div>
-            <div className="tableCell rosterHide">{member.emPhone}</div>
-            <div className="tableCell rosterHide">{member.emEmail}</div>
+            <div className="tableCell hideMobile">{member.phone}</div>
+            <div className="tableCell hideMobile">{member.email}</div>
+            <div className="tableCell rosterHide hideMobile">{member.emContactName}</div>
+            <div className="tableCell rosterHide hideMobile">{member.emPhone}</div>
+            <div className="tableCell rosterHide hideMobile">{member.emEmail}</div>
         </div>
     );
     
@@ -282,7 +247,7 @@ const Roster = () => {
     );
 
     // roster html
-    const roster = (
+    const rosterHTML = (
         <div>
             <div className="rosterHeader">
                 <div onClick={() => newMember()} className="ssButton">Add Member</div>
@@ -300,11 +265,11 @@ const Roster = () => {
                 <div className="rosterTableHeader">
                     <div className="tableCell">Name</div>
                     <div className="tableCell">Role</div>
-                    <div className="tableCell">Phone</div>
-                    <div className="tableCell">Email</div>
-                    <div className="tableCell rosterHide">Emergency Contact</div>
-                    <div className="tableCell rosterHide">Emergency Phone</div>
-                    <div className="tableCell rosterHide">Emergency Email</div>
+                    <div className="tableCell hideMobile">Phone</div>
+                    <div className="tableCell hideMobile">Email</div>
+                    <div className="tableCell rosterHide hideMobile">Emergency Contact</div>
+                    <div className="tableCell rosterHide hideMobile">Emergency Phone</div>
+                    <div className="tableCell rosterHide hideMobile">Emergency Email</div>
                 </div>
                 <div className="rosterTableBody">
                     {rosterRows}
@@ -326,7 +291,7 @@ const Roster = () => {
     // Roster html
     return (
         <div className="roster">
-            <FullContainer headIcon={faPeopleGroup} title={'Roster'} content={roster} />
+            <FullContainer headIcon={faPeopleGroup} title={'Roster'} content={rosterHTML} />
         </div>
     );
 }

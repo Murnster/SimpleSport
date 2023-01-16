@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { get, post } from "../network";
 import { faCog } from '@fortawesome/free-solid-svg-icons'
 import BigContainer from "./BigContainer";
 import Input from "./Input";
@@ -7,7 +6,7 @@ import Toast from "./Toast";
 import "../css/System.css";
 
 // System component
-const System = ({updateSiteData}) => {
+const System = ({siteData, updateSiteData, eventTypes, setEventTypes, memberTypes, setMemberTypes}) => {
     // States
     const [systemData, getSysData] = useState({site: {}, eTypes: [], mTypes: []});
     const [sitePanel, openSitePanel] = useState(false);
@@ -44,19 +43,15 @@ const System = ({updateSiteData}) => {
             eTypes: [],
             mTypes: []
         };
-
-        Promise.all([
-            get('siteData'),
-            get('eventTypes'),
-            get('memberTypes')
-        ]).then((arrays) => {
-            data.site = arrays[0][0];
-            data.eTypes = arrays[1];
-            data.mTypes = arrays[2];
-        }).then(() => {
-            getSysData(data);
-            updateSiteData(data.site);
-        });
+        
+        data.site = siteData;
+        data.eTypes = eventTypes;
+        data.mTypes = memberTypes;
+        
+        console.log(data);
+        
+        getSysData(data);
+        updateSiteData(data.site);
     };
 
     // Open / Close function for settings tabs
@@ -120,16 +115,17 @@ const System = ({updateSiteData}) => {
             teamName: teamName.value,
             homeScreen: homeScreen.value
         };
-
-        const result = await post('postSiteData', payload);
-
-        if (result.success) {
-            await fetchSystem();
-            openSystemToast(true, 'Site Data was successfully saved!');
-        } else {
-            openSystemToast(false, 'There was an issue saving Site Data, please refresh and try again');
-            console.error('There was a failure trying to save site');
-        }
+        
+        updateSiteData(payload);
+        
+        getSysData({
+            site: siteData,
+            eTypes: eventTypes,
+            mTypes: memberTypes
+        });
+        
+        console.log(systemData);
+        openSystemToast(true, 'Site Data was successfully saved!');
     };
 
     // Save Event Types function
@@ -142,20 +138,14 @@ const System = ({updateSiteData}) => {
         }
 
         const payload = {
-            id: '-1',
+            typeID: eventTypes.length + 1,
             title: newEventType.value
         };
-
-        const result = await post('postEventType', payload);
-
-        if (result.success) {
-            newEventType.value = '';
-            openSystemToast(true, 'Your new event type was successfully saved!');
-            fetchSystem();
-        } else {
-            openSystemToast(false, 'There was a failure trying to save this event type');
-            console.error('There was a failure trying to save this event type');
-        }
+        
+        setEventTypes([...eventTypes, payload]);
+        await fetchSystem();
+        
+        openSystemToast(true, 'Your new event type was successfully saved!');
     };
 
     // Save member types function
@@ -168,20 +158,14 @@ const System = ({updateSiteData}) => {
         }
 
         const payload = {
-            id: '-1',
+            typeID: memberTypes.length + 1,
             title: newMemberType.value
         };
-
-        const result = await post('postMemberType', payload);
-
-        if (result.success) {
-            newMemberType.value = '';
-            openSystemToast(true, 'Your new member type was successfully saved!');
-            fetchSystem();
-        } else {
-            openSystemToast(false, 'There was a failure trying to save this member type');
-            console.error('There was a failure trying to save this member type');
-        }
+        
+        setMemberTypes([...memberTypes, payload]);
+        await fetchSystem();
+        
+        openSystemToast(true, 'Your new member type was successfully saved!');
     };
 
     // Hook
