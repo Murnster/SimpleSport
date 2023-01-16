@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/simplesport/static/css/main.624885a8.css",
+    "main.js": "/simplesport/static/js/main.7b830c3a.js",
+    "index.html": "/simplesport/index.html",
+    "main.624885a8.css.map": "/simplesport/static/css/main.624885a8.css.map",
+    "main.7b830c3a.js.map": "/simplesport/static/js/main.7b830c3a.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.624885a8.css",
+    "static/js/main.7b830c3a.js"
+  ]
+}
