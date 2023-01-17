@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/SimpleSport/static/css/main.25d0047a.css",
-    "main.js": "/SimpleSport/static/js/main.a58365a3.js",
+    "main.js": "/SimpleSport/static/js/main.79c71304.js",
     "index.html": "/SimpleSport/index.html",
     "main.25d0047a.css.map": "/SimpleSport/static/css/main.25d0047a.css.map",
-    "main.a58365a3.js.map": "/SimpleSport/static/js/main.a58365a3.js.map"
+    "main.79c71304.js.map": "/SimpleSport/static/js/main.79c71304.js.map"
   },
   "entrypoints": [
     "static/css/main.25d0047a.css",
-    "static/js/main.a58365a3.js"
+    "static/js/main.79c71304.js"
   ]
 }
