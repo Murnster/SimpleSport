@@ -272,7 +272,7 @@ const App = () => {
   const appPopup = (
      <div className="appPopup">
        <div className="appPopupWarning">
-         Thanks for checking out my project! This is a quick warning that this application was created primarily for browser view. I have added a mobile format but it does lack some functionality. Please open SimpleSport in your browser for the best user experience!
+         Thanks for checking out my project! I built SimpleSport using React.js as a way to learn a new technology. This is a quick warning that this application was created primarily for browser view. I have added a mobile format but it does lack some functionality. Please open SimpleSport in your browser for the best user experience!
        </div>
      </div>
   );

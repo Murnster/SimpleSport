@@ -431,6 +431,7 @@ body {
     .popupBody {
         overflow-y: scroll !important;
         overflow: hidden;
+        margin: 20px !important;
     }
     
     .createEventBody .row {
@@ -456,5 +457,9 @@ body {
     
     #newTeamName {
         height: 40%;
+    }
+    
+    .popupHeader h3 {
+        margin-left: 25px !important;
     }
 }
